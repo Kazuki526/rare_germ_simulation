@@ -9,7 +9,7 @@ int main()
   Parameters param;
   param.set_damage_mt();
   Population population(param);
-  for(int t=1; 100 >= t; t++){
+  for(int t=1; t <= 100; t++){
     population.one_generation(param);
     int rare_mut_num = 0;
     for(int &n: population.tsg_non_mutation_count(param)){

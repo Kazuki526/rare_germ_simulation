@@ -2,7 +2,7 @@
 #include"population.hpp"
 
 Population::Population(Parameters& param){
-  for(int i=0; i < param.N; i++){
+  for(size_t i=0; i < param.N; i++){
     Individual ind;
     ind.set_param(param);
     individuals.push_back(ind);
@@ -11,13 +11,14 @@ Population::Population(Parameters& param){
 
 std::vector<double> Population::add_new_mutations(Parameters& param){
   std::vector<double> fitness;
-  for(int i=0; i < param.N; i++){
+  for(size_t i=0; i < param.N; i++){
     individuals[i].add_mutations(param);
     fitness.push_back(individuals[i].get_fitness());
   }
   return fitness;
 }
 
+// make offspring from two Individual
 Individual Population::reproduct(Parameters& param, size_t i1, size_t i2){
   int mutater=0;
   std::vector<int> tsg_non;
@@ -53,20 +54,23 @@ Individual Population::reproduct(Parameters& param, size_t i1, size_t i2){
   return(ind);
 }
 
+// reproduct N time
 void Population::next_generation(Parameters& param, const std::vector<double>& fitness){
   std::vector<Individual> next_inds;
   std::discrete_distribution<std::size_t> dist(fitness.begin(), fitness.end());
-  for(int i=0; i < param.N; i++){
+  for(size_t i=0; i < param.N; i++){
      next_inds.push_back(reproduct(param, dist(param.mt), dist(param.mt)));
   }
   individuals = next_inds;
 }
 
+// add_new_mutations + next_generation
 void Population::one_generation(Parameters& param){
   std::vector<double> fitness = add_new_mutations(param);
   next_generation(param, fitness);
 }
 
+// get all mutation AC
 std::vector<int> Population::tsg_non_mutation_count(Parameters& param){
   std::vector<int> tsg_non_mutation(param.tsg_non_site);
   for(Individual &ind: individuals){

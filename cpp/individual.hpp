@@ -9,7 +9,7 @@
 
 struct Parameters
 {
-  const int N = 50000;
+  const size_t N = 50000;
   const double mutation_rate = 0.00000001;
   const int tsg_non_site = 191624;
   const int tsg_syn_site = 61470;
