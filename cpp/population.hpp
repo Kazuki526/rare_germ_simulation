@@ -4,18 +4,21 @@
 
 #include"individual.hpp"
 
-class Population : public Individual
+class Population
 {
 private:
   std::vector<Individual> individuals;
+  std::vector<double> fitness;
+  std::vector<std::size_t> num_tsg_non_mutation;
+
+  Individual reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2);
+  void mutation_count(const Constant& nums, const Parameters& param);
 public:
-  Population(Parameters& param);
+  double rare_tsg_non_freq;
+
+  Population(const Constant& nums, const Parameters& param);
   std::vector<int> get_mutater_list();
-  std::vector<double> add_new_mutations(Parameters& param); //return fitness_vector
-  Individual reproduct(Parameters& param, size_t i1, size_t i2);
-  void next_generation(Parameters& param, const std::vector<double>& fitness);
-  void one_generation(Parameters& param);
-  std::vector<int> tsg_non_mutation_count(Parameters& param);
+  void next_generation(Constant& nums, const Parameters& param);
 };
 
 

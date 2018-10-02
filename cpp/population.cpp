@@ -1,85 +1,63 @@
 #include"individual.hpp"
 #include"population.hpp"
 
-Population::Population(Parameters& param){
-  for(size_t i=0; i < param.N; i++){
+Population::Population(const Constant& nums, const Parameters& param){
+  for(std::size_t i=0; i < nums.N; i++){
     Individual ind;
-    ind.set_param(param);
+    ind.set_param(nums, param);
     individuals.push_back(ind);
   }
 }
 
-std::vector<double> Population::add_new_mutations(Parameters& param){
-  std::vector<double> fitness;
-  for(size_t i=0; i < param.N; i++){
-    individuals[i].add_mutations(param);
-    fitness.push_back(individuals[i].get_fitness());
-  }
-  return fitness;
-}
-
-// make offspring from two Individual
-Individual Population::reproduct(Parameters& param, size_t i1, size_t i2){
-  int mutater=0;
-  std::vector<int> tsg_non;
-  std::bernoulli_distribution bern(0.5);
-  // individuals[i1] 's gamate
-  int muta = individuals[i1].get_mutater();
-  if(muta == 2){
-    mutater++;
-  }else if(muta == 1){
-    if(bern(param.mt)){mutater++;}
-  }
-  for(int &het_mu: individuals[i1].get_tsg_non_het()){
-    if(bern(param.mt)){tsg_non.push_back(het_mu);}
-  }
-  for(int &hom_mu: individuals[i1].get_tsg_non_hom()){
-    tsg_non.push_back(hom_mu);
-  }
-  // individuals[i2] 's gamate
-  muta = individuals[i2].get_mutater();
-  if(muta == 2){
-    mutater++;
-  }else if(muta == 1){
-    if(bern(param.mt)){mutater++;}
-  }
-  for(int &het_mu: individuals[i2].get_tsg_non_het()){
-    if(bern(param.mt)){tsg_non.push_back(het_mu);}
-  }
-  for(int &hom_mu: individuals[i2].get_tsg_non_hom()){
-    tsg_non.push_back(hom_mu);
-  }
+/* make offspring from two Individual */
+Individual Population::reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2){
+  int mutater =
+      individuals[i1].gamate_mutater(nums) +
+      individuals[i2].gamate_mutater(nums);
+  std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums);
+  std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums);
+  tsg_non.insert(tsg_non.end(), tn2.begin(), tn2.end());
   Individual ind(mutater, tsg_non);
-  ind.set_param(param);
+  ind.set_param(nums, param);
   return(ind);
 }
 
-// reproduct N time
-void Population::next_generation(Parameters& param, const std::vector<double>& fitness){
+/* get all mutation AC */
+void Population::mutation_count(const Constant& nums, const Parameters& param){
+  num_tsg_non_mutation.clear();
+  num_tsg_non_mutation.resize(nums.tsg_non_site);
+  for(Individual &ind: individuals){
+    for(std::size_t het_mu: ind.get_tsg_non_het()){
+      num_tsg_non_mutation[het_mu]++;
+    }
+    for(std::size_t hom_mu: ind.get_tsg_non_hom()){
+      num_tsg_non_mutation[hom_mu]+=2;
+    }
+  }
+  rare_tsg_non_freq=0;
+  for(std::size_t mu=0; mu < nums.tsg_non_site; mu++){
+    if(num_tsg_non_mutation[mu] < nums.N*0.05/100){
+      rare_tsg_non_freq += (double) num_tsg_non_mutation[mu] /nums.N;
+    }
+  }
+}
+
+void Population::next_generation(Constant& nums, const Parameters& param){
+  /* add_mutations & set fitness */
+  fitness.clear(); fitness.reserve(nums.N);
+  for(std::size_t i=0; i < nums.N; i++){
+    individuals[i].add_mutations(nums, param);
+    //fitness.push_back(individuals[i].get_fitness());
+    fitness.push_back((1- individuals[i].get_damage() * param.fitness_coef));
+  }
+  /* reproduct N individual */
   std::vector<Individual> next_inds;
+  next_inds.reserve(nums.N);
   std::discrete_distribution<std::size_t> dist(fitness.begin(), fitness.end());
-  for(size_t i=0; i < param.N; i++){
-     next_inds.push_back(reproduct(param, dist(param.mt), dist(param.mt)));
+  for(std::size_t i=0; i < nums.N; i++){
+     next_inds.push_back(reproduct(nums, param, dist(nums.mt), dist(nums.mt)));
   }
   individuals = next_inds;
-}
-
-// add_new_mutations + next_generation
-void Population::one_generation(Parameters& param){
-  std::vector<double> fitness = add_new_mutations(param);
-  next_generation(param, fitness);
-}
-
-// get all mutation AC
-std::vector<int> Population::tsg_non_mutation_count(Parameters& param){
-  std::vector<int> tsg_non_mutation(param.tsg_non_site);
-  for(Individual &ind: individuals){
-    for(int &het_mu: ind.get_tsg_non_het()){
-      tsg_non_mutation[het_mu]++;
-    }
-    for(int &hom_mu: ind.get_tsg_non_hom()){
-      tsg_non_mutation[hom_mu]+=2;
-    }
-  }
-  return(tsg_non_mutation);
+  /* mutation_count */
+  mutation_count(nums, param);
 }

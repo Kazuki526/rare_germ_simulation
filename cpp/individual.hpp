@@ -7,16 +7,24 @@
 #include <vector>
 #include <random>
 
-struct Parameters
-{
-  const size_t N = 50000;
+struct Constant{
+  const std::size_t N = 50000;
   const double mutation_rate = 0.00000001;
-  const int tsg_non_site = 191624;
-  const int tsg_syn_site = 61470;
-  const int cont_non_site = 923307;
+  const std::size_t tsg_non_site = 191624;
+  const std::size_t tsg_syn_site = 61470;
+  const std::size_t cont_non_site = 923307;
   const double mean_onset_age = 61.5;
   const double age_sd = 13.5;
   std::mt19937 mt;
+  Constant(){
+    std::random_device rnd;
+    std::mt19937 mt_(rnd());
+    mt = mt_;
+  }
+};
+
+struct Parameters
+{
   double mutation_rate_coef=10;
   double mutater_effect=100;
   double mutater_mutation_rate=0.001;
@@ -28,14 +36,15 @@ struct Parameters
   bool cont_non_fitness_only=true;
   double fitness_coef=0.1;
   double cancer_prob_coef=1;
-  void set_damage_mt(){
-    std::random_device rnd;
-    std::mt19937 mt_(rnd());
-    mt = mt_;
+  void set_damage_mt(Constant& nums){
     std::exponential_distribution<> tsg_ex(tsg_non_damage_e);
     std::exponential_distribution<> cont_ex(cont_non_damage_e);
-    for(int s=0; tsg_non_site > s; s++) {tsg_non_damage.push_back(tsg_ex(mt));}
-    for(int s=0; cont_non_site > s; s++){cont_non_damage.push_back(cont_ex(mt));}
+    for(std::size_t s=0; nums.tsg_non_site > s; s++){
+      tsg_non_damage.push_back(tsg_ex(nums.mt));
+    }
+    for(std::size_t s=0; nums.cont_non_site > s; s++){
+      cont_non_damage.push_back(cont_ex(nums.mt));
+    }
   }
 };
 
@@ -43,21 +52,24 @@ class Individual
 {
 private:
   int mutater;
-  std::vector<int> tsg_non_het;
-  std::vector<int> tsg_non_hom;
+  std::vector<std::size_t> tsg_non_het;
+  std::vector<std::size_t> tsg_non_hom;
   double mut_r;
   double damage;
-  double fitness;
+  //double fitness;
 public:
-  Individual(): mutater(0), damage(0) ,fitness(1){};
-  Individual(const int& m, std::vector<int>& tn);
+  Individual(): mutater(0), damage(0){};
+  Individual(const int m, const std::vector<std::size_t>& tsg_non);
   int get_mutater(){return mutater;}
-  std::vector<int> get_tsg_non_het(){return tsg_non_het;}
-  std::vector<int> get_tsg_non_hom(){return tsg_non_hom;}
+  const std::vector<std::size_t>& get_tsg_non_het(){return tsg_non_het;}
+  const std::vector<std::size_t>& get_tsg_non_hom(){return tsg_non_hom;}
   double get_damage(){return damage;}
-  double get_fitness(){return fitness;}
-  void set_param(Parameters& param);
-  void add_mutations(Parameters& param);
+  //double get_fitness(){return fitness;}
+  void set_param(const Constant& nums, const Parameters& param);
+  void add_mutations(Constant& nums, const Parameters& param);
+  /* gamate */
+  int gamate_mutater(Constant nums);
+  std::vector<size_t> gamate_tsg_non(Constant nums);
 };
 
 #endif
