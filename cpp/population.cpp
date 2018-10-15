@@ -188,7 +188,7 @@ bool around_5per(const double value, const double desired_value){
   return result;
 }
 
-bool accept_reject_judge(const Constant& nums, const Population population){
+bool accept_reject_judge(const Constant& nums, const Population& population){
   bool result=true;
   if(!around_5per(population.rare_tsg_non_freq, nums.rare_tsg_non_num)){
     result = false;

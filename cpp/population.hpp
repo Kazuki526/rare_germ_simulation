@@ -35,6 +35,6 @@ public:
   void regression_onset_age(Constant& nums, const Parameters& param);
 };
 
-bool accept_reject_judge(const Constant& nums, const Population population);
+bool accept_reject_judge(const Constant& nums, const Population& population);
 
 #endif

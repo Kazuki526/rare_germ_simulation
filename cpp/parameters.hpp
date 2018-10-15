@@ -29,17 +29,17 @@ struct Constant{
 
 struct Parameters
 {                                           // variable_param num
-  double mutation_rate_coef=10;             // 0
-  double mutater_effect=100;                // 1
-  double mutater_mutation_rate=0.001;       // 2
-  double mutater_damage=0.3;                // 3
-  double tsg_non_damage_e=0.5;              // 4
-  double cont_non_damage_e=0.1;             // 5
+  double mutation_rate_coef;                // 0
+  double mutater_effect;                    // 1
+  double mutater_mutation_rate;             // 2
+  double mutater_damage;                    // 3
+  double tsg_non_damage_e;                  // 4
+  double cont_non_damage_e;                 // 5
   std::vector<double> tsg_non_damage;
   std::vector<double> cont_non_damage;
-  bool cont_non_fitness_only=true;          // 6
-  double fitness_coef=0.1;                  // 7
-  void set_damage(Constant& nums);
+  bool cont_non_fitness_only;               // 6
+  double fitness_coef;                      // 7
+  Parameters(Constant& nums);
   void change_param(Constant& nums,const std::size_t time);
 
 private:
@@ -59,5 +59,6 @@ private:
 };
 
 double log_random(double start, double end, std::mt19937 mt);
+
 
 #endif

@@ -6,13 +6,14 @@ Constant::Constant(){
   mt = mt_;
 }
 
-void Parameters::set_damage(Constant& nums){
+Parameters::Parameters(Constant& nums){
   mutation_rate_coef = get_mutation_rate_coef(nums);
   mutater_effect = get_mutater_effect(nums);
   mutater_mutation_rate = get_mutater_mutation_rate(nums);
   mutater_damage = get_mutater_damage(nums);
   tsg_non_damage_e = get_tsg_non_damage_e(nums);
   cont_non_damage_e = get_cont_non_damage_e(nums);
+  cont_non_fitness_only = (bool)get_cont_non_fitness_only(nums);
   fitness_coef = get_fitness_coef(nums);
 
   std::exponential_distribution<> tsg_ex(tsg_non_damage_e);
@@ -23,6 +24,75 @@ void Parameters::set_damage(Constant& nums){
   for(std::size_t s=0; nums.cont_non_site > s; s++){
     cont_non_damage.push_back(cont_ex(nums.mt));
   }
+
+  /* set variable parameter */
+  std::uniform_int_distribution<> dist(0,7);
+  variable_param=dist(nums.mt);
+  std::vector<double> v1,v2,v3;
+  switch (variable_param) {
+    case 0:
+      while(v1.size() < 5){
+        v1.push_back(get_mutation_rate_coef(nums));
+        v2.push_back(get_mutation_rate_coef(nums));
+        v3.push_back(get_mutation_rate_coef(nums));
+      }
+      break;
+    case 1:
+      while(v1.size() < 5){
+        v1.push_back(get_mutater_effect(nums));
+        v2.push_back(get_mutater_effect(nums));
+        v3.push_back(get_mutater_effect(nums));
+      }
+      break;
+    case 2:
+      while(v1.size() < 5){
+        v1.push_back(get_mutater_mutation_rate(nums));
+        v2.push_back(get_mutater_mutation_rate(nums));
+        v3.push_back(get_mutater_mutation_rate(nums));
+      }
+      break;
+    case 3:
+      while(v1.size() < 5){
+        v1.push_back(get_mutater_damage(nums));
+        v2.push_back(get_mutater_damage(nums));
+        v3.push_back(get_mutater_damage(nums));
+      }
+      break;
+    case 4:
+      while(v1.size() < 5){
+        v1.push_back(get_tsg_non_damage_e(nums));
+        v2.push_back(get_tsg_non_damage_e(nums));
+        v3.push_back(get_tsg_non_damage_e(nums));
+      }
+      break;
+    case 5:
+      while(v1.size() < 5){
+        v1.push_back(get_cont_non_damage_e(nums));
+        v2.push_back(get_cont_non_damage_e(nums));
+        v3.push_back(get_cont_non_damage_e(nums));
+      }
+      break;
+    case 6:
+      while(v1.size() < 5){
+        v1.push_back(get_cont_non_fitness_only(nums));
+        v2.push_back(get_cont_non_fitness_only(nums));
+        v3.push_back(get_cont_non_fitness_only(nums));
+      }
+      break;
+    case 7:
+      while(v1.size() < 5){
+        v1.push_back(get_fitness_coef(nums));
+        v2.push_back(get_fitness_coef(nums));
+        v3.push_back(get_fitness_coef(nums));
+      }
+      break;
+  }
+  sort(v1.begin(),  v1.end());
+  sort(v2.rbegin(), v2.rend());
+  sort(v3.begin(),  v3.end());
+  variable_param_values=v1;
+  variable_param_values.insert(variable_param_values.end(), v2.begin(), v2.end());
+  variable_param_values.insert(variable_param_values.end(), v3.begin(), v3.end());
 }
 
 void Parameters::change_param(Constant& nums,const std::size_t time){
@@ -55,7 +125,7 @@ void Parameters::change_param(Constant& nums,const std::size_t time){
 }
 
 double Parameters::get_mutation_rate_coef(Constant& nums){
-  std::uniform_real_distribution<> dist(0.1, 1.0);
+  std::uniform_real_distribution<> dist(50.0, 200.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){
@@ -63,7 +133,7 @@ double Parameters::get_mutater_effect(Constant& nums){
   return dist(nums.mt);
 }
 double Parameters::get_mutater_mutation_rate(Constant& nums){
-  return log_random(0, 0.001, nums.mt);
+  return log_random(0.000001, 0.001, nums.mt);
 }
 double Parameters::get_mutater_damage(Constant& nums){
   std::uniform_real_distribution<> dist(0.0, 5.0);
@@ -79,7 +149,7 @@ double Parameters::get_cont_non_damage_e(Constant& nums){
 }
 double Parameters::get_cont_non_fitness_only(Constant& nums){
   std::uniform_int_distribution<> dist(0, 1);
-  return dist(nums.mt);
+  return (double)dist(nums.mt);
 }
 double Parameters::get_fitness_coef(Constant& nums){
   return log_random(0.01,0.5,nums.mt);
