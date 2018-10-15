@@ -57,7 +57,6 @@ void one_set(Constant& nums,std::ofstream& outfile){
   for(int time=0; time < 15; time++){
     param.change_param(nums, time);
     one_replicate(nums, param, population, outfile);
-    std::cout << "done " << time+1 << " time\n";
   }
 }
 
@@ -72,8 +71,9 @@ int main()
   outfile << "tsg_syn_num\ttsg_syn_regression\t";
   outfile << "cont_non_num\tcont_non_regression\taccept_reject\n";
   Constant nums;
-  for(int set_num=0; set_num<6; set_num++){
+  for(int set_num=0; set_num<80; set_num++){
     one_set(nums, outfile);
+    std::cout << "done" << set_num << "set\n";
   }
 
   return 0;

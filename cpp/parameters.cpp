@@ -152,7 +152,7 @@ double Parameters::get_cont_non_fitness_only(Constant& nums){
   return (double)dist(nums.mt);
 }
 double Parameters::get_fitness_coef(Constant& nums){
-  return log_random(0.01,0.5,nums.mt);
+  return log_random(0.001,0.5,nums.mt);
 }
 
 
