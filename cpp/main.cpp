@@ -4,12 +4,12 @@
 void one_replicate(Constant& nums, const Parameters& param,
                    Population& population, std::ofstream& outfile){
   population.set_params(nums,param);
-  int t=0;
   bool tn_equiv=true, ts_equiv=true, cn_equiv=true;
   std::vector<double> tsg_non;
   std::vector<double> tsg_syn;
   std::vector<double> cont_non;
-  while((tn_equiv || ts_equiv || cn_equiv) && t<500){
+  int t=0;
+  while((tn_equiv || ts_equiv || cn_equiv) && t < 500){
     if(t!=0 && t%20==0){
       population.next_generation(nums, param, true);
     }else{
@@ -30,6 +30,7 @@ void one_replicate(Constant& nums, const Parameters& param,
       ts_equiv = equiv_lm(tsg_syn);
       cn_equiv = equiv_lm(cont_non);
     }
+    t++;
   }
   outfile << population.rare_tsg_non_freq << "\t";
   outfile << population.rare_tsg_syn_freq << "\t";
@@ -44,6 +45,7 @@ int main()
   Parameters param;
   param.set_damage_mt(nums);
   Population population(nums);
+  one_replicate(nums, param, population, outfile);
 
   return 0;
 }
