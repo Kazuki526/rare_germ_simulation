@@ -32,18 +32,38 @@ void one_replicate(Constant& nums, const Parameters& param,
     }
     t++;
   }
+  population.regression_onset_age(nums, param);
+  bool accept_reject = accept_reject_judge(nums, population);
+  outfile << param.mutation_rate_coef <<"\t";
+  outfile << param.mutater_effect <<"\t";
+  outfile << param.mutater_mutation_rate <<"\t";
+  outfile << param.mutater_damage <<"\t";
+  outfile << param.tsg_non_damage_e <<"\t";
+  outfile << param.cont_non_damage_e <<"\t";
+  outfile << param.cont_non_fitness_only <<"\t";
+  outfile << param.fitness_coef <<"\t";
   outfile << population.rare_tsg_non_freq << "\t";
+  outfile << population.tsg_non_regression <<"\t";
   outfile << population.rare_tsg_syn_freq << "\t";
-  outfile << population.rare_cont_non_freq << "\n";
+  outfile << population.tsg_syn_regression <<"\t";
+  outfile << population.rare_cont_non_freq << "\t";
+  outfile << population.cont_non_regression <<"\t";
+  outfile << accept_reject << std::endl;
 }
 
 int main()
 {
   std::ofstream outfile;
-  outfile.open("equiv_out.tsv", std::ios::out);
+  outfile.open("simulation_result.tsv", std::ios::out);
+  outfile << "mutation_rate_coef\tmutater_effect\tmutater_mutation_rate\t";
+  outfile << "mutater_damage\ttsg_non_damage_e\tcont_non_damage_e\t";
+  outfile << "cont_non_fitness_only\tfitness_coef\t";
+  outfile << "tsg_non_num\ttsg_non_regression\t";
+  outfile << "tsg_syn_num\ttsg_syn_regression\t";
+  outfile << "cont_non_num\tcont_non_regression\taccept_reject\n";
   Constant nums;
   Parameters param;
-  param.set_damage_mt(nums);
+  param.set_damage(nums);
   Population population(nums);
   one_replicate(nums, param, population, outfile);
 

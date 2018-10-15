@@ -87,6 +87,7 @@ void Individual::set_param(const Constant& nums, const Parameters& param){
     damage += cont_damage;
     fitness = 1 - damage*param.fitness_coef;
   }
+  if(fitness < 0){fitness=0;}
 }
 
 void Individual::add_mutations(Constant& nums, const Parameters& param){

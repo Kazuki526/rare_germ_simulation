@@ -24,13 +24,17 @@ public:
   double rare_tsg_non_freq;
   double rare_tsg_syn_freq;
   double rare_cont_non_freq;
+  double tsg_non_regression;
+  double tsg_syn_regression;
+  double cont_non_regression;
 
   Population(const Constant& nums);
   void set_params(const Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);
   void next_generation(Constant& nums, const Parameters& param, bool common_variant=false);
-  std::vector<double> regression_onset_age(Constant& nums, const Parameters& param);
+  void regression_onset_age(Constant& nums, const Parameters& param);
 };
 
+bool accept_reject_judge(const Constant& nums, const Population population);
 
 #endif

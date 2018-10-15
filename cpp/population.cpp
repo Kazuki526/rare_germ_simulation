@@ -134,13 +134,16 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
   }
 }
 
-std::vector<double> Population::regression_onset_age(Constant& nums, const Parameters& param){
-  const double rare =nums.N*2*0.05*0.01;
+void Population::regression_onset_age(Constant& nums, const Parameters& param){
+  const double rare =nums.N*2.0*0.05*0.01;
   std::normal_distribution<> norm_dist(nums.mean_onset_age, nums.onset_age_sd);
+/* set patient number(id) for analyzing onset age */
   std::vector<std::size_t> patient_ids(nums.N);
   std::iota(patient_ids.begin(),patient_ids.end(),0);
   std::shuffle(patient_ids.begin(),patient_ids.end(),nums.mt);
 
+/* search rare variant nums of each patient */
+  int rare_tsg_non_num=0, rare_tsg_syn_num=0, rare_cont_non_num=0;
   std::vector<int> rare_tsg_non(nums.patient_n, 0);
   std::vector<int> rare_tsg_syn(nums.patient_n, 0);
   std::vector<int> rare_cont_non(nums.patient_n, 0);
@@ -149,30 +152,56 @@ std::vector<double> Population::regression_onset_age(Constant& nums, const Param
     Individual& ind = individuals[patient_ids[t]];
     /* tsg nonsynonymous rare variant */
     for(std::size_t het: ind.get_tsg_non_het()){
-      if(num_tsg_non_mutation[het] < rare){rare_tsg_non[t]++;}
+      if(num_tsg_non_mutation[het] < rare){rare_tsg_non[t]++;rare_tsg_non_num++;}
     }
     for(std::size_t hom: ind.get_tsg_non_hom()){
-      if(num_tsg_non_mutation[hom] < rare){rare_tsg_non[t]+=2;}
+      if(num_tsg_non_mutation[hom] < rare){rare_tsg_non[t]+=2;rare_tsg_non_num+=2;}
     }
     /* tsg synonymous rare variant */
     for(std::size_t het: ind.get_tsg_syn_het()){
-      if(num_tsg_syn_mutation[het] < rare){rare_tsg_syn[t]++;}
+      if(num_tsg_syn_mutation[het] < rare){rare_tsg_syn[t]++;rare_tsg_syn_num++;}
     }
     for(std::size_t hom: ind.get_tsg_syn_hom()){
-      if(num_tsg_syn_mutation[hom] < rare){rare_tsg_syn[t]+=2;}
+      if(num_tsg_syn_mutation[hom] < rare){rare_tsg_syn[t]+=2;rare_tsg_syn_num+=2;}
     }
     /* control nonsynonymous rare variant */
     for(std::size_t het: ind.get_cont_non_het()){
-      if(num_cont_non_mutation[het] < rare){rare_cont_non[t]++;}
+      if(num_cont_non_mutation[het] < rare){rare_cont_non[t]++;rare_cont_non_num++;}
     }
     for(std::size_t hom: ind.get_cont_non_hom()){
-      if(num_cont_non_mutation[hom] < rare){rare_cont_non[t]+=2;}
+      if(num_cont_non_mutation[hom] < rare){rare_cont_non[t]+=2;rare_cont_non_num+=2;}
     }
     onset_age_list.push_back(norm_dist(nums.mt) - ind.get_damage());
   }
-  double tn_lm = linear_model(rare_tsg_non, onset_age_list);
-  double ts_lm = linear_model(rare_tsg_syn, onset_age_list);
-  double cn_lm = linear_model(rare_cont_non, onset_age_list);
-  std::vector<double> lm = {tn_lm, ts_lm, cn_lm};
-  return lm;
+  rare_tsg_non_freq = (double)rare_tsg_non_num/nums.patient_n;
+  rare_tsg_syn_freq = (double)rare_tsg_syn_num/nums.patient_n;
+  rare_cont_non_freq = (double)rare_cont_non_num/nums.patient_n;
+  tsg_non_regression = linear_model(rare_tsg_non, onset_age_list);
+  tsg_syn_regression = linear_model(rare_tsg_syn, onset_age_list);
+  cont_non_regression = linear_model(rare_cont_non, onset_age_list);
+}
+
+bool around_5per(const double value, const double desired_value){
+  bool result = true;
+  if(value < desired_value*0.95){result=false;}
+  if(value > desired_value*1.05){result=false;}
+  return result;
+}
+
+bool accept_reject_judge(const Constant& nums, const Population population){
+  bool result=true;
+  if(!around_5per(population.rare_tsg_non_freq, nums.rare_tsg_non_num)){
+    result = false;
+  }else if(!around_5per(population.rare_tsg_syn_freq, nums.rare_tsg_syn_num)){
+    result = false;
+  }else if(!around_5per(population.rare_cont_non_freq, nums.rare_cont_non_num)){
+    result = false;
+  }else if(!around_5per(population.tsg_non_regression, nums.tsg_non_onset_regression)){
+    result = false;
+  }else if(!around_5per(population.tsg_syn_regression, nums.tsg_syn_onset_regression)){
+    result = false;
+  }else if(!around_5per(population.cont_non_regression, nums.cont_non_onset_regression)){
+    result = false;
+  }
+  return result;
 }

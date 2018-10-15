@@ -17,29 +17,47 @@ struct Constant{
   const std::size_t cont_non_site = 923307;
   const double mean_onset_age = 61.5;
   const double onset_age_sd = 13.5;
+  const double rare_tsg_non_num = 0.92474;
+  const double rare_tsg_syn_num = 0.6611;
+  const double rare_cont_non_num = 4.24805;
+  const double tsg_non_onset_regression = -0.70911;
+  const double tsg_syn_onset_regression = -0.69074;
+  const double cont_non_onset_regression = -0.29612;
   std::mt19937 mt;
-  Constant(){
-    std::random_device rnd;
-    std::mt19937 mt_(rnd());
-    mt = mt_;
-  }
+  Constant();
 };
 
 struct Parameters
-{
-  double mutation_rate_coef=10;
-  double mutater_effect=100;
-  double mutater_mutation_rate=0.001;
-  double mutater_damage=0.3;
-  double tsg_non_damage_e=0.5;
-  double cont_non_damage_e=0.1;
+{                                           // variable_param num
+  double mutation_rate_coef=10;             // 0
+  double mutater_effect=100;                // 1
+  double mutater_mutation_rate=0.001;       // 2
+  double mutater_damage=0.3;                // 3
+  double tsg_non_damage_e=0.5;              // 4
+  double cont_non_damage_e=0.1;             // 5
   std::vector<double> tsg_non_damage;
   std::vector<double> cont_non_damage;
-  bool cont_non_fitness_only=true;
-  double fitness_coef=0.1;
-  double cancer_prob_coef=1;
-  void set_damage_mt(Constant& nums);
-  void change_param(std::size_t p, double doub);
+  bool cont_non_fitness_only=true;          // 6
+  double fitness_coef=0.1;                  // 7
+  void set_damage(Constant& nums);
+  void change_param(Constant& nums,const std::size_t time);
+
+private:
+  std::size_t variable_param;
+  std::vector<double> variable_param_values;
+
+  double get_mutation_rate_coef(Constant& nums);
+  double get_mutater_effect(Constant& nums);
+  double get_mutater_mutation_rate(Constant& nums);
+  double get_mutater_damage(Constant& nums);
+  double get_tsg_non_damage_e(Constant& nums);
+  double get_cont_non_damage_e(Constant& nums);
+  double get_cont_non_fitness_only(Constant& nums);
+  double get_fitness_coef(Constant& nums);
+  void set_tsg_non_damage(Constant& nums);
+  void set_cont_non_damage(Constant& nums);
 };
+
+double log_random(double start, double end, std::mt19937 mt);
 
 #endif
