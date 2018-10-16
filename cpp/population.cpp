@@ -14,7 +14,7 @@ void Population::set_params(const Constant& nums, const Parameters& param){
 }
 
 void Population::set_common_variant(const Constant& nums){
-  double common_num = nums.N *2*0.02;
+  double common_num = nums.N *2*0.01;
   for(std::size_t m=0; m < nums.tsg_non_site; m++){
     if(num_tsg_non_mutation[m] > common_num){tsg_non_common.insert(m);}
   }
