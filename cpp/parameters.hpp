@@ -40,11 +40,11 @@ struct Parameters
   bool cont_non_fitness_only;               // 6
   double fitness_coef;                      // 7
   Parameters(Constant& nums);
-  void change_param(Constant& nums,const std::size_t time);
+  //void change_param(Constant& nums,const std::size_t time);
 
 private:
-  std::size_t variable_param;
-  std::vector<double> variable_param_values;
+  //std::size_t variable_param;
+  //std::vector<double> variable_param_values;
 
   double get_mutation_rate_coef(Constant& nums);
   double get_mutater_effect(Constant& nums);

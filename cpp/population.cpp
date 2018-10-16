@@ -181,26 +181,26 @@ void Population::regression_onset_age(Constant& nums, const Parameters& param){
   cont_non_regression = linear_model(rare_cont_non, onset_age_list);
 }
 
-bool around_5per(const double value, const double desired_value){
+bool around_percentn(const double value, const double desired_value, double n=0.2){
   bool result = true;
-  if(value < desired_value*0.95){result=false;}
-  if(value > desired_value*1.05){result=false;}
+  if(value < desired_value*(1.0-n)){result=false;}
+  if(value > desired_value*(1.0+n)){result=false;}
   return result;
 }
 
 bool accept_reject_judge(const Constant& nums, const Population& population){
   bool result=true;
-  if(!around_5per(population.rare_tsg_non_freq, nums.rare_tsg_non_num)){
+  if(!around_percentn(population.rare_tsg_non_freq, nums.rare_tsg_non_num)){
     result = false;
-  }else if(!around_5per(population.rare_tsg_syn_freq, nums.rare_tsg_syn_num)){
+  }else if(!around_percentn(population.rare_tsg_syn_freq, nums.rare_tsg_syn_num)){
     result = false;
-  }else if(!around_5per(population.rare_cont_non_freq, nums.rare_cont_non_num)){
+  }else if(!around_percentn(population.rare_cont_non_freq, nums.rare_cont_non_num)){
     result = false;
-  }else if(!around_5per(population.tsg_non_regression, nums.tsg_non_onset_regression)){
+  }else if(!around_percentn(population.tsg_non_regression, nums.tsg_non_onset_regression)){
     result = false;
-  }else if(!around_5per(population.tsg_syn_regression, nums.tsg_syn_onset_regression)){
+  }else if(!around_percentn(population.tsg_syn_regression, nums.tsg_syn_onset_regression)){
     result = false;
-  }else if(!around_5per(population.cont_non_regression, nums.cont_non_onset_regression)){
+  }else if(!around_percentn(population.cont_non_regression, nums.cont_non_onset_regression)){
     result = false;
   }
   return result;

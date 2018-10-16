@@ -26,7 +26,7 @@ Parameters::Parameters(Constant& nums){
   }
 
   /* set variable parameter */
-  std::uniform_int_distribution<> dist(0,7);
+  /*std::uniform_int_distribution<> dist(0,7);
   variable_param=dist(nums.mt);
   std::vector<double> v1,v2,v3;
   switch (variable_param) {
@@ -93,8 +93,10 @@ Parameters::Parameters(Constant& nums){
   variable_param_values=v1;
   variable_param_values.insert(variable_param_values.end(), v2.begin(), v2.end());
   variable_param_values.insert(variable_param_values.end(), v3.begin(), v3.end());
+  */
 }
 
+/*
 void Parameters::change_param(Constant& nums,const std::size_t time){
   switch (variable_param) {
     case 0: mutation_rate_coef=variable_param_values[time]; break;
@@ -122,7 +124,7 @@ void Parameters::change_param(Constant& nums,const std::size_t time){
       break;
     case 7: fitness_coef=variable_param_values[time]; break;
   }
-}
+}*/
 
 double Parameters::get_mutation_rate_coef(Constant& nums){
   std::uniform_real_distribution<> dist(50.0, 200.0);

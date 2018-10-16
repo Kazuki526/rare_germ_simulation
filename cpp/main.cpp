@@ -1,6 +1,26 @@
 #include <fstream>
 #include "population.hpp"
 
+void print_out(Constant& nums, const Parameters& param,
+               Population& population, std::ofstream& outfile){
+  bool accept_reject = accept_reject_judge(nums, population);
+  outfile << param.mutation_rate_coef <<"\t";
+  outfile << param.mutater_effect <<"\t";
+  outfile << param.mutater_mutation_rate <<"\t";
+  outfile << param.mutater_damage <<"\t";
+  outfile << param.tsg_non_damage_e <<"\t";
+  outfile << param.cont_non_damage_e <<"\t";
+  outfile << param.cont_non_fitness_only <<"\t";
+  outfile << param.fitness_coef <<"\t";
+  outfile << population.rare_tsg_non_freq << "\t";
+  outfile << population.tsg_non_regression <<"\t";
+  outfile << population.rare_tsg_syn_freq << "\t";
+  outfile << population.tsg_syn_regression <<"\t";
+  outfile << population.rare_cont_non_freq << "\t";
+  outfile << population.cont_non_regression <<"\t";
+  outfile << accept_reject << std::endl;
+}
+
 void one_replicate(Constant& nums, const Parameters& param,
                    Population& population, std::ofstream& outfile){
   population.set_params(nums,param);
@@ -32,25 +52,32 @@ void one_replicate(Constant& nums, const Parameters& param,
     }
     t++;
   }
+  std::vector<double> tn_num,tn_reg,ts_num,ts_reg,cn_num,cn_reg;
+  for(int time=0; time < 90; time++){
+    if(time %10 ==0){
+      population.regression_onset_age(nums, param);
+      print_out(nums,param,population,outfile);
+      tn_num.push_back(population.rare_tsg_non_freq);
+      tn_reg.push_back(population.tsg_non_regression);
+      ts_num.push_back(population.rare_tsg_syn_freq);
+      ts_reg.push_back(population.tsg_syn_regression);
+      cn_num.push_back(population.rare_cont_non_freq);
+      cn_reg.push_back(population.cont_non_regression);
+    }
+    population.next_generation(nums,param);
+  }
   population.regression_onset_age(nums, param);
-  bool accept_reject = accept_reject_judge(nums, population);
-  outfile << param.mutation_rate_coef <<"\t";
-  outfile << param.mutater_effect <<"\t";
-  outfile << param.mutater_mutation_rate <<"\t";
-  outfile << param.mutater_damage <<"\t";
-  outfile << param.tsg_non_damage_e <<"\t";
-  outfile << param.cont_non_damage_e <<"\t";
-  outfile << param.cont_non_fitness_only <<"\t";
-  outfile << param.fitness_coef <<"\t";
-  outfile << population.rare_tsg_non_freq << "\t";
-  outfile << population.tsg_non_regression <<"\t";
-  outfile << population.rare_tsg_syn_freq << "\t";
-  outfile << population.tsg_syn_regression <<"\t";
-  outfile << population.rare_cont_non_freq << "\t";
-  outfile << population.cont_non_regression <<"\t";
-  outfile << accept_reject << std::endl;
+  print_out(nums,param,population,outfile);
+  population.rare_tsg_non_freq = std::accumulate(tn_num.begin(),tn_num.end(),0) /10.0;
+  population.tsg_non_regression = std::accumulate(tn_reg.begin(),tn_reg.end(),0) /10.0;
+  population.rare_tsg_syn_freq = std::accumulate(ts_num.begin(),ts_num.end(),0) /10.0;
+  population.tsg_syn_regression = std::accumulate(ts_reg.begin(),ts_reg.end(),0) /10.0;
+  population.rare_cont_non_freq = std::accumulate(cn_num.begin(),cn_num.end(),0) /10.0;
+  population.cont_non_regression = std::accumulate(cn_reg.begin(),cn_reg.end(),0) /10.0;
+  print_out(nums,param,population,outfile);
 }
 
+/*
 void one_set(Constant& nums,std::ofstream& outfile){
   Parameters param(nums);
   Population population(nums);
@@ -59,6 +86,7 @@ void one_set(Constant& nums,std::ofstream& outfile){
     one_replicate(nums, param, population, outfile);
   }
 }
+*/
 
 int main()
 {
@@ -71,9 +99,11 @@ int main()
   outfile << "tsg_syn_num\ttsg_syn_regression\t";
   outfile << "cont_non_num\tcont_non_regression\taccept_reject\n";
   Constant nums;
-  for(int set_num=0; set_num<80; set_num++){
-    one_set(nums, outfile);
-    std::cout << "done" << set_num << "set\n";
+  for(int set_num=0; set_num<200; set_num++){
+    Parameters param(nums);
+    Population population(nums);
+    one_replicate(nums, param, population, outfile);
+    std::cout << "done" << set_num+1 << "time\n";
   }
 
   return 0;
