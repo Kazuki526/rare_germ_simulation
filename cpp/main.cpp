@@ -80,12 +80,12 @@ bool one_replicate(Constant& nums, const Parameters& param,
     }
     population.regression_onset_age(nums, param);
     print_out(nums,param,population,outfile);
-    population.rare_tsg_non_freq = std::accumulate(tn_num.begin(),tn_num.end(),0) /10.0;
-    population.tsg_non_regression = std::accumulate(tn_reg.begin(),tn_reg.end(),0) /10.0;
-    population.rare_tsg_syn_freq = std::accumulate(ts_num.begin(),ts_num.end(),0) /10.0;
-    population.tsg_syn_regression = std::accumulate(ts_reg.begin(),ts_reg.end(),0) /10.0;
-    population.rare_cont_non_freq = std::accumulate(cn_num.begin(),cn_num.end(),0) /10.0;
-    population.cont_non_regression = std::accumulate(cn_reg.begin(),cn_reg.end(),0) /10.0;
+    population.rare_tsg_non_freq = std::accumulate(tn_num.begin(),tn_num.end(),0.0) /10.0;
+    population.tsg_non_regression = std::accumulate(tn_reg.begin(),tn_reg.end(),0.0) /10.0;
+    population.rare_tsg_syn_freq = std::accumulate(ts_num.begin(),ts_num.end(),0.0) /10.0;
+    population.tsg_syn_regression = std::accumulate(ts_reg.begin(),ts_reg.end(),0.0) /10.0;
+    population.rare_cont_non_freq = std::accumulate(cn_num.begin(),cn_num.end(),0.0) /10.0;
+    population.cont_non_regression = std::accumulate(cn_reg.begin(),cn_reg.end(),0.0) /10.0;
     print_out(nums,param,population,outfile,true);
     return(!over_mutation); // return true
   }
