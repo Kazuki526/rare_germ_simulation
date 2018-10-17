@@ -66,7 +66,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     for(int time=0; time < 90; time++){
       if(time %10 ==0){
         population.regression_onset_age(nums, param);
-        print_out(nums,param,population,outfile);
+        //print_out(nums,param,population,outfile);
         tn_num.push_back(population.rare_tsg_non_freq);
         tn_reg.push_back(population.tsg_non_regression);
         ts_num.push_back(population.rare_tsg_syn_freq);
@@ -114,7 +114,7 @@ int main()
   outfile << "cont_non_num\tcont_non_regression\taccept_reject\n";
   Constant nums;
   int time=0;
-  while(time <200){
+  while(time <4000){
     Parameters param(nums);
     Population population(nums);
     bool replicate_result = one_replicate(nums, param, population, outfile);
