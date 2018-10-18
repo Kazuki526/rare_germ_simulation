@@ -130,7 +130,7 @@ void Parameters::change_param(Constant& nums,const std::size_t time){
 }*/
 
 double Parameters::get_mutation_rate_coef(Constant& nums){
-  std::uniform_real_distribution<> dist(5.0, 20.0);
+  std::uniform_real_distribution<> dist(10.0, 15.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){
