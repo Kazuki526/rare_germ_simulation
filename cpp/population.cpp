@@ -56,6 +56,7 @@ Individual Population::reproduct(Constant& nums, const Parameters& param, std::s
 
 /* get all mutation AC */
 void Population::mutation_count(const Constant& nums, const Parameters& param){
+  const double rare =nums.N*2.0*0.05*0.01;
 /* tsg nonsynonymous */
   num_tsg_non_mutation.clear();
   num_tsg_non_mutation.resize(nums.tsg_non_site);
@@ -69,7 +70,7 @@ void Population::mutation_count(const Constant& nums, const Parameters& param){
   }
   rare_tsg_non_freq=0;
   for(std::size_t mu=0; mu < nums.tsg_non_site; mu++){
-    if(num_tsg_non_mutation[mu] < nums.N*2*0.05/100){
+    if(num_tsg_non_mutation[mu] < rare){
       rare_tsg_non_freq += (double) num_tsg_non_mutation[mu] /nums.N;
     }
   }
@@ -86,7 +87,7 @@ void Population::mutation_count(const Constant& nums, const Parameters& param){
   }
   rare_tsg_syn_freq=0;
   for(std::size_t mu=0; mu < nums.tsg_syn_site; mu++){
-    if(num_tsg_syn_mutation[mu] < nums.N*2*0.05/100){
+    if(num_tsg_syn_mutation[mu] < rare){
       rare_tsg_syn_freq += (double) num_tsg_syn_mutation[mu] /nums.N;
     }
   }
@@ -103,7 +104,7 @@ void Population::mutation_count(const Constant& nums, const Parameters& param){
   }
   rare_cont_non_freq=0;
   for(std::size_t mu=0; mu < nums.cont_non_site; mu++){
-    if(num_cont_non_mutation[mu] < nums.N*2*0.05/100){
+    if(num_cont_non_mutation[mu] < rare){
       rare_cont_non_freq += (double) num_cont_non_mutation[mu] /nums.N;
     }
   }

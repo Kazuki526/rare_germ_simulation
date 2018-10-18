@@ -14,18 +14,19 @@ private:
   std::vector<std::size_t> tsg_syn_hom;
   std::vector<std::size_t> cont_non_het;
   std::vector<std::size_t> cont_non_hom;
-  double mut_r;
+
   double damage;
   double fitness;
 public:
+  double mut_r;
   Individual(): mutater(0){};
   Individual(const int m,
              const std::vector<std::size_t>& tsg_non,
              const std::vector<std::size_t>& tsg_syn,
              const std::vector<std::size_t>& cont_non,
-             const std::unordered_set<std::size_t> tsg_non_common={},
-             const std::unordered_set<std::size_t> tsg_syn_common={},
-             const std::unordered_set<std::size_t> cont_non_common={});
+             const std::unordered_set<std::size_t>& tsg_non_common={},
+             const std::unordered_set<std::size_t>& tsg_syn_common={},
+             const std::unordered_set<std::size_t>& cont_non_common={});
   int get_mutater(){return mutater;}
   const std::vector<std::size_t>& get_tsg_non_het(){return tsg_non_het;}
   const std::vector<std::size_t>& get_tsg_non_hom(){return tsg_non_hom;}
@@ -38,10 +39,10 @@ public:
   void set_param(const Constant& nums, const Parameters& param);
   void add_mutations(Constant& nums, const Parameters& param);
   /* gamate */
-  int gamate_mutater(Constant nums);
-  std::vector<size_t> gamate_tsg_non(Constant nums);
-  std::vector<size_t> gamate_tsg_syn(Constant nums);
-  std::vector<size_t> gamate_cont_non(Constant nums);
+  int gamate_mutater(Constant& nums);
+  std::vector<std::size_t> gamate_tsg_non(Constant& nums);
+  std::vector<std::size_t> gamate_tsg_syn(Constant& nums);
+  std::vector<std::size_t> gamate_cont_non(Constant& nums);
 };
 
 #endif

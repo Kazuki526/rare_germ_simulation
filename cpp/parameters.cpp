@@ -4,7 +4,10 @@ Constant::Constant(){
   std::random_device rnd;
   std::mt19937 mt_(rnd());
   mt = mt_;
+  std::bernoulli_distribution bern_(0.5);
+  bern = bern_;
 }
+
 
 Parameters::Parameters(Constant& nums){
   mutation_rate_coef = get_mutation_rate_coef(nums);
@@ -127,7 +130,7 @@ void Parameters::change_param(Constant& nums,const std::size_t time){
 }*/
 
 double Parameters::get_mutation_rate_coef(Constant& nums){
-  std::uniform_real_distribution<> dist(50.0, 200.0);
+  std::uniform_real_distribution<> dist(5.0, 20.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){

@@ -24,6 +24,7 @@ struct Constant{
   const double tsg_syn_onset_regression = -0.69074;
   const double cont_non_onset_regression = -0.29612;
   std::mt19937 mt;
+  std::bernoulli_distribution bern;
   Constant();
 };
 
