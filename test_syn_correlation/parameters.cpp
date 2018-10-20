@@ -40,7 +40,7 @@ Parameters::Parameters(Constant& nums){
   }
 
 
-  double log_random(double start, double end, std::mt19937 mt){
+  double log_random(double start, double end, std::mt19937& mt){
     start = std::log10(start==0 ? 0.000000001 : start);
     end   = std::log10(end);
     std::uniform_real_distribution<> dist(start, end);

@@ -131,15 +131,15 @@ void Population::correlation_ns(){
     }
   }
   double nonav,synav;
-  nonav = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0)/N;
-  synav = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0)/N;
-  double nonv=0, synv=0, nonsynv=0;
+  nonav = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/N;
+  synav = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/N;
+  double nonv=0.0, synv=0.0, nonsynv=0.0;
   for(std::size_t i=0; i < N; i++){
     nonv+=(double)(non_rare_num[i]-nonav)*(non_rare_num[i]-nonav);
     synv+=(double)(syn_rare_num[i]-synav)*(syn_rare_num[i]-synav);
     nonsynv+=(double)(non_rare_num[i]-nonav)*(syn_rare_num[i]-synav);
   }
-  rare_tsg_non_sd = std::sqrt(nonv/N);
-  rare_tsg_syn_sd = std::sqrt(synv/N);
+  rare_tsg_non_sd = std::sqrt((double)nonv/N);
+  rare_tsg_syn_sd = std::sqrt((double)synv/N);
   rare_non_syn_correlation = (double)(nonsynv/N)/(rare_tsg_non_sd*rare_tsg_syn_sd);
 }

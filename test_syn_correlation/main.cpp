@@ -13,6 +13,7 @@ void print_out(const Parameters& param,
   outfile << population.rare_tsg_syn_freq << "\t";
   outfile << population.rare_tsg_syn_sd <<"\t";
   outfile << population.rare_non_syn_correlation << "\n";
+  outfile.flush();
 }
 
 bool one_replicate(Constant& nums, const Parameters& param,
@@ -50,8 +51,9 @@ bool one_replicate(Constant& nums, const Parameters& param,
     return(!over_mutation); // return false
   }else{
     std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor;
-    for(int time=0; time < 90; time++){
+    for(int time=0; time <= 90; time++){
       if(time %10 ==0){
+        population.correlation_ns();
         //print_out(nums,param,population,outfile);
         tn_num.push_back(population.rare_tsg_non_freq);
         tn_sd.push_back(population.rare_tsg_non_sd);

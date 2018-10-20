@@ -47,7 +47,7 @@ private:
   void set_tsg_non_damage(Constant& nums);
 };
 
-double log_random(double start, double end, std::mt19937 mt);
+double log_random(double start, double end, std::mt19937& mt);
 bool equiv_lm(const std::vector<double>& mutation);
 
 #endif
