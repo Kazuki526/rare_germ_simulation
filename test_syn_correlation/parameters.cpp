@@ -18,18 +18,18 @@ Parameters::Parameters(Constant& nums){
     return(dbl<1 ? 1 : std::round(dbl));
   }
   double Parameters::get_mutater_effect(Constant& nums){
-    std::uniform_real_distribution<> dist(5.0, 100.0);
+    std::uniform_real_distribution<> dist(2.0, 100.0);
     return dist(nums.mt);
   }
   double Parameters::get_mutater_mutation_rate(Constant& nums){
     return log_random(0.000001, 0.001, nums.mt);
   }
   double Parameters::get_mutater_damage(Constant& nums){
-    std::uniform_real_distribution<> dist(0.0, 5.0);
+    std::uniform_real_distribution<> dist(0.0, 0.1);
     return dist(nums.mt);
   }
   double Parameters::get_tsg_non_damage_e(Constant& nums){
-    std::uniform_real_distribution<> dist(0.1, 5.0);
+    std::uniform_real_distribution<> dist(0.1, 0.5);
     return dist(nums.mt);
   }
   void Parameters::set_tsg_non_damage(Constant& nums){

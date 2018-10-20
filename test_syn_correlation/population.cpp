@@ -111,3 +111,35 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
     tsg_syn_common.clear();
   }
 }
+
+void Population::correlation_ns(){
+  const int N =individuals.size();
+  const int rare = N/1000;
+  std::vector<int> non_rare_num(N,0), syn_rare_num(N,0);
+  for(std::size_t i=0; i < N;i++){
+    for(std::size_t tn_het: individuals[i].get_tsg_non_het()){
+      if(num_tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}
+    }
+    for(std::size_t tn_hom: individuals[i].get_tsg_non_hom()){
+      if(num_tsg_non_mutation[tn_hom] < rare){non_rare_num[i]+=2;}
+    }
+    for(std::size_t ts_het: individuals[i].get_tsg_syn_het()){
+      if(num_tsg_syn_mutation[ts_het] < rare){syn_rare_num[i]++;}
+    }
+    for(std::size_t ts_hom: individuals[i].get_tsg_syn_hom()){
+      if(num_tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}
+    }
+  }
+  double nonav,synav;
+  nonav = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0)/N;
+  synav = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0)/N;
+  double nonv=0, synv=0, nonsynv=0;
+  for(std::size_t i=0; i < N; i++){
+    nonv+=(double)(non_rare_num[i]-nonav)*(non_rare_num[i]-nonav);
+    synv+=(double)(syn_rare_num[i]-synav)*(syn_rare_num[i]-synav);
+    nonsynv+=(double)(non_rare_num[i]-nonav)*(syn_rare_num[i]-synav);
+  }
+  rare_tsg_non_sd = std::sqrt(nonv/N);
+  rare_tsg_syn_sd = std::sqrt(synv/N);
+  rare_non_syn_correlation = (double)(nonsynv/N)/(rare_tsg_non_sd*rare_tsg_syn_sd);
+}
