@@ -2,19 +2,19 @@
 
 Parameters::Parameters(Constant& nums){
   mutater_locas = get_mutater_locas(nums);
-  mutater_effect = get_mutater_effect(nums)/mutater_locas;
+  mutater_effect = std::pow(get_mutater_effect(nums),(double)1.0/mutater_locas);
   mutater_mutation_rate = get_mutater_mutation_rate(nums);
   mutater_damage = get_mutater_damage(nums);
   tsg_non_damage_e = get_tsg_non_damage_e(nums);
 
-  std::exponential_distribution<> tsg_ex(tsg_non_damage_e);
-  for(std::size_t s=0; nums.tsg_non_site > s; s++){
+  std::exponential_distribution<> tsg_ex(1.0/tsg_non_damage_e);
+  for(std::size_t s=0; s < nums.tsg_non_site; s++){
     tsg_non_damage.push_back(tsg_ex(nums.mt));
   }
 }
 
   int Parameters::get_mutater_locas(Constant& nums){
-    double dbl = log_random(0.1, 100.0, nums.mt);
+    double dbl = log_random(0.1, 20.0, nums.mt);
     return(dbl<1 ? 1 : std::round(dbl));
   }
   double Parameters::get_mutater_effect(Constant& nums){
@@ -29,14 +29,8 @@ Parameters::Parameters(Constant& nums){
     return dist(nums.mt);
   }
   double Parameters::get_tsg_non_damage_e(Constant& nums){
-    std::uniform_real_distribution<> dist(0.1, 0.5);
+    std::uniform_real_distribution<> dist(0.01, 0.1);
     return dist(nums.mt);
-  }
-  void Parameters::set_tsg_non_damage(Constant& nums){
-    std::exponential_distribution<> tsg_ex(tsg_non_damage_e);
-    for(std::size_t s=0; nums.tsg_non_site > s; s++){
-      tsg_non_damage.push_back(tsg_ex(nums.mt));
-    }
   }
 
 

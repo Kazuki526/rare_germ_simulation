@@ -57,10 +57,6 @@ void Individual::set_param(const Constant& nums, const Parameters& param){
   for(const std::size_t mutater_num: mutater){
     for(int i=1; i <= mutater_num; i++){mut_r*=param.mutater_effect;}
   }
-  fitness=1;
-  for(std::size_t mu: tsg_non_het){fitness-=param.tsg_non_damage[mu];}
-  for(std::size_t mu: tsg_non_hom){fitness-=param.tsg_non_damage[mu]*2;}
-  if(fitness < 0){fitness=0;}
 }
 
 void Individual::add_mutations(Constant& nums, const Parameters& param){
@@ -98,6 +94,12 @@ void Individual::add_mutations(Constant& nums, const Parameters& param){
       tsg_syn_het.push_back(mut);
     }
   }
+  /* set fitness */
+  fitness=1;
+  for(std::size_t mut: mutater){fitness-=param.mutater_damage*mut;}
+  for(std::size_t mu: tsg_non_het){fitness-=param.tsg_non_damage[mu];}
+  for(std::size_t mu: tsg_non_hom){fitness-=param.tsg_non_damage[mu]*2;}
+  if(fitness < 0){fitness=0;}
 }
 
 /* gamate methods */
