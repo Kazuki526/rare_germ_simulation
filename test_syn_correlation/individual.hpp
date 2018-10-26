@@ -27,6 +27,7 @@ public:
   const std::vector<std::size_t>& get_tsg_non_hom(){return tsg_non_hom;}
   const std::vector<std::size_t>& get_tsg_syn_het(){return tsg_syn_het;}
   const std::vector<std::size_t>& get_tsg_syn_hom(){return tsg_syn_hom;}
+  double get_mut_r(){return mut_r;}
   double get_fitness(){return fitness;}
   void set_param(const Constant& nums, const Parameters& param);
   void add_mutations(Constant& nums, const Parameters& param);

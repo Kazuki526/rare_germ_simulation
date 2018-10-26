@@ -12,7 +12,7 @@
 struct Constant{
   const std::size_t N = 50000;
   const std::size_t patient_n =6418;
-  const double mutation_rate = 0.00000012;
+  const double mutation_rate = 0.0000001;
   const std::size_t tsg_non_site = 191624;
   const std::size_t tsg_syn_site = 61470;
   const double rare_tsg_non_num = 0.92474;
@@ -29,14 +29,17 @@ struct Constant{
 };
 
 struct Parameters
-{                                           // variable_param num
+{
   int mutater_locas;
-  double mutater_effect;                    // 1
-  double mutater_mutation_rate;             // 2
-  double mutater_damage;                    // 3
-  double tsg_non_damage_e;                  // 4
+  double mutater_effect;
+  double mutater_mutation_rate;
+  double mutater_damage;
+  double tsg_non_damage_e;
   std::vector<double> tsg_non_damage;
+  double expected_mutater_freq;
   Parameters(Constant& nums);
+  void reset(Constant& nums);
+  void set_damage(Constant& nums);
 
 private:
   int get_mutater_locas(Constant& nums);

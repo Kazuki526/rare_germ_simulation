@@ -18,6 +18,10 @@ private:
   Individual reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2, bool common_check);
   void mutation_count(const Constant& nums, const Parameters& param);
 public:
+  double mutation_rate_ave;
+  double mutation_rate_sd;
+  double mutater_freq;
+  double mutater_sd;
   double rare_tsg_non_freq;
   double rare_tsg_syn_freq;
   double rare_tsg_non_sd;

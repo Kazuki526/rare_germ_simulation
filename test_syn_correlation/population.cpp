@@ -116,6 +116,8 @@ void Population::correlation_ns(){
   const int N =individuals.size();
   const int rare = N/1000;
   std::vector<int> non_rare_num(N,0), syn_rare_num(N,0);
+  std::vector<std::size_t> mutater_num; mutater_num.reserve(N);
+  std::vector<double> mutation_rate; mutation_rate.reserve(N);
   for(std::size_t i=0; i < N;i++){
     for(std::size_t tn_het: individuals[i].get_tsg_non_het()){
       if(num_tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}
@@ -129,17 +131,26 @@ void Population::correlation_ns(){
     for(std::size_t ts_hom: individuals[i].get_tsg_syn_hom()){
       if(num_tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}
     }
+    std::vector<std::size_t> mut=individuals[i].get_mutater();
+    mutater_num.push_back(std::accumulate(mut.begin(),mut.end(),0));
+    mutation_rate.push_back(individuals[i].get_mut_r());
   }
   double nonav,synav;
   nonav = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/N;
   synav = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/N;
-  double nonv=0.0, synv=0.0, nonsynv=0.0;
+  mutater_freq = (double)std::accumulate(mutater_num.begin(),mutater_num.end(),0)/N;
+  mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/N;
+  double nonv=0.0, synv=0.0, nonsynv=0.0, mutv=0.0, mutrv=0.0;
   for(std::size_t i=0; i < N; i++){
     nonv+=(double)((non_rare_num[i]-nonav)*(non_rare_num[i]-nonav));
     synv+=(double)((syn_rare_num[i]-synav)*(syn_rare_num[i]-synav));
     nonsynv+=(double)((non_rare_num[i]-nonav)*(syn_rare_num[i]-synav));
+    mutv+=(double)((mutater_num[i]-mutater_freq)*(mutater_num[i]-mutater_freq));
+    mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
   }
   rare_tsg_non_sd = std::sqrt((double)nonv/N);
   rare_tsg_syn_sd = std::sqrt((double)synv/N);
   rare_non_syn_correlation = (double)(nonsynv/N)/(rare_tsg_non_sd*rare_tsg_syn_sd);
+  mutater_sd = std::sqrt((double)mutv/N);
+  mutation_rate_sd = std::sqrt((double)mutrv/N);
 }
