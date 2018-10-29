@@ -82,6 +82,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     population.mutater_sd = (double)std::accumulate(mut_sd.begin(),mut_sd.end(),0.0) /mut_sd.size();
     population.mutation_rate_ave = (double)std::accumulate(mutr.begin(),mutr.end(),0.0) /mutr.size();
     population.mutation_rate_sd = (double)std::accumulate(mutr_sd.begin(),mutr_sd.end(),0.0) /mutr_sd.size();
+    outfile << t << "\t";
     print_out(param,population,outfile);
     return(!over_mutation); // return true
   }
@@ -90,8 +91,8 @@ int main()
 {
   std::ofstream outfile;
   outfile.open("simulation_result.tsv", std::ios::out);
-  outfile << "mutater_locas\tmutater_effect\tmutater_mutation_rate\t";
-  outfile << "mutater_damage\ttsg_non_damage_e\t";
+  outfile << "generation\tmutater_locas\tmutater_effect\t";
+  outfile << "mutater_mutation_rate\tmutater_damage\ttsg_non_damage_e\t";
   outfile << "tsg_non_num\ttsg_non_sd\t";
   outfile << "tsg_syn_num\ttsg_syn_sd\t";
   outfile << "mutater_freq\tmutater_sd\tmutation_rate_freq\tmutation_rate_sd\t";
