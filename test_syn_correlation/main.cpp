@@ -97,7 +97,7 @@ int main()
   outfile << "mutater_freq\tmutater_sd\tmutation_rate_freq\tmutation_rate_sd\t";
   outfile << "correlation\n";
   Constant nums;
-  int time=0;
+  int time=1;
   while(time <4000){
     Parameters param(nums);
     while(param.expected_mutater_freq<1.02){param.reset(nums);}
@@ -105,7 +105,7 @@ int main()
     Population population(nums);
     bool replicate_result = one_replicate(nums, param, population, outfile);
     if(replicate_result){
-      std::cout << "done" << time+1 << "time\n";
+      std::cout << "done" << time << "time\n";
       time++;
     }
   }

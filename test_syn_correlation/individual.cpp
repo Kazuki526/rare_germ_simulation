@@ -57,14 +57,23 @@ void Individual::set_param(const Constant& nums, const Parameters& param){
   for(const std::size_t mutater_num: mutater){
     for(int i=1; i <= mutater_num; i++){mut_r*=param.mutater_effect;}
   }
+  /* set fitness */
+  fitness=1;
+  for(std::size_t mut: mutater){fitness-=param.mutater_damage*mut;}
+  for(std::size_t mu: tsg_non_het){fitness-=param.tsg_non_damage[mu];}
+  for(std::size_t mu: tsg_non_hom){fitness-=param.tsg_non_damage[mu]*2;}
+  if(fitness < 0){fitness=0;}
 }
 
 void Individual::add_mutations(Constant& nums, const Parameters& param){
   /* new mutater mutation */
   std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
   for(std::size_t mutater_posi=0; mutater_posi < param.mutater_locas; mutater_posi++){
-    mutater[mutater_posi] +=p_mutater(nums.mt);
-    if(mutater[mutater_posi]>2){mutater[mutater_posi]-=2;}
+    std::size_t new_mutater = p_mutater(nums.mt)+p_mutater(nums.mt);
+    if(new_mutater==1 & mutater[mutater_posi]==1){
+      mutater[mutater_posi] = nums.bern(nums.mt) ? 2: 0;
+    }else{mutater[mutater_posi]+=new_mutater;}
+    while(mutater[mutater_posi]>2){mutater[mutater_posi]-=2;}
   }
   /* new TSG nonsynonymous mutation */
   std::poisson_distribution<> pois_tn(nums.tsg_non_site*mut_r);
@@ -94,12 +103,6 @@ void Individual::add_mutations(Constant& nums, const Parameters& param){
       tsg_syn_het.push_back(mut);
     }
   }
-  /* set fitness */
-  fitness=1;
-  for(std::size_t mut: mutater){fitness-=param.mutater_damage*mut;}
-  for(std::size_t mu: tsg_non_het){fitness-=param.tsg_non_damage[mu];}
-  for(std::size_t mu: tsg_non_hom){fitness-=param.tsg_non_damage[mu]*2;}
-  if(fitness < 0){fitness=0;}
 }
 
 /* gamate methods */
@@ -109,7 +112,7 @@ std::vector<std::size_t> Individual::gamate_mutater(Constant& nums){
     if(mutater[mutater_posi] ==2){
       new_mutater[mutater_posi]=1;
     }else if(mutater[mutater_posi]==1){
-      if(nums.bern(nums.mt)){new_mutater[mutater_posi]++;}
+      if(nums.bern(nums.mt)){new_mutater[mutater_posi]=1;}
     }
   }
   return new_mutater;
