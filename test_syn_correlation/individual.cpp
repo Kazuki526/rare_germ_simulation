@@ -1,6 +1,6 @@
 #include"individual.hpp"
 
-Individual::Individual(const std::vector<std::size_t>& m,
+Individual::Individual(const std::size_t& m,
            const std::vector<std::size_t>& tsg_non,
            const std::vector<std::size_t>& tsg_syn,
            const std::unordered_set<std::size_t>& tsg_non_common,
@@ -52,73 +52,32 @@ Individual::Individual(const std::vector<std::size_t>& m,
 }
 
 void Individual::set_param(const Constant& nums, const Parameters& param){
-  mutater.resize(param.mutater_locas);
   mut_r = nums.mutation_rate;
-  for(const std::size_t mutater_num: mutater){
-    for(int i=1; i <= mutater_num; i++){mut_r*=param.mutater_effect;}
-  }
+  for(int i=1; i <= mutater; i++){mut_r*=param.mutater_effect;}
   /* set fitness */
   fitness=1;
-  for(std::size_t mut: mutater){fitness-=param.mutater_damage*mut;}
-  for(std::size_t mu: tsg_non_het){fitness-=param.tsg_non_damage[mu];}
-  for(std::size_t mu: tsg_non_hom){fitness-=param.tsg_non_damage[mu]*2;}
-  if(fitness < 0){fitness=0;}
-}
-
-void Individual::add_mutations(Constant& nums, const Parameters& param){
-  /* new mutater mutation */
-  std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
-  for(std::size_t mutater_posi=0; mutater_posi < param.mutater_locas; mutater_posi++){
-    std::size_t new_mutater = p_mutater(nums.mt)+p_mutater(nums.mt);
-    if(new_mutater==1 & mutater[mutater_posi]==1){
-      mutater[mutater_posi] = nums.bern(nums.mt) ? 2: 0;
-    }else{mutater[mutater_posi]+=new_mutater;}
-    while(mutater[mutater_posi]>2){mutater[mutater_posi]-=2;}
-  }
-  /* new TSG nonsynonymous mutation */
-  std::poisson_distribution<> pois_tn(nums.tsg_non_site*mut_r);
-  std::poisson_distribution<> pois_ts(nums.tsg_syn_site*mut_r);
-  std::uniform_int_distribution<> tn_mut(0, nums.tsg_non_site -1);
-  std::uniform_int_distribution<> ts_mut(0, nums.tsg_syn_site -1);
-  int tn_num=pois_tn(nums.mt), ts_num=pois_ts(nums.mt);
-/* tsg nonsynonymous */
-  if(tn_num > 0){
-    std::vector<std::size_t> new_tsg_non;
-    while(tn_num > 0){
-      tn_num--;
-      new_tsg_non.push_back(tn_mut(nums.mt));
-    }
-    for(std::size_t &mut: new_tsg_non){
-      tsg_non_het.push_back(mut);
-    }
-  }
-/* tsg synonymous */
-  if(ts_num > 0){
-    std::vector<std::size_t> new_tsg_syn;
-    while(ts_num > 0){
-      ts_num--;
-      new_tsg_syn.push_back(ts_mut(nums.mt));
-    }
-    for(std::size_t &mut: new_tsg_syn){
-      tsg_syn_het.push_back(mut);
-    }
-  }
+  for(int i=1; i <= mutater; i++){fitness*=(1-param.mutater_damage);}
+  for(std::size_t mu: tsg_non_het){fitness*=(1-param.tsg_non_damage[mu]);}
+  for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
 }
 
 /* gamate methods */
-std::vector<std::size_t> Individual::gamate_mutater(Constant& nums){
-  std::vector<std::size_t> new_mutater(mutater.size(),0);
-  for(std::size_t mutater_posi=0; mutater_posi < mutater.size();mutater_posi++){
-    if(mutater[mutater_posi] ==2){
-      new_mutater[mutater_posi]=1;
-    }else if(mutater[mutater_posi]==1){
-      if(nums.bern(nums.mt)){new_mutater[mutater_posi]=1;}
-    }
+std::size_t Individual::gamate_mutater(Constant& nums, const Parameters& param){
+  std::size_t new_mutater=0;
+  if(mutater ==2){
+    new_mutater=1;
+  }else if(mutater==1){
+    if(nums.bern(nums.mt)){new_mutater=1;}
+  }
+  /* add mutation */
+  std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
+  if(p_mutater(nums.mt)){
+    if(new_mutater==1){new_mutater=0;}else{new_mutater=1;}
   }
   return new_mutater;
 }
 
-std::vector<std::size_t> Individual::gamate_tsg_non(Constant& nums){
+std::vector<std::size_t> Individual::gamate_tsg_non(Constant& nums, const Parameters& param){
   std::vector<std::size_t> new_tsg_non;
   for(std::size_t het_mu: tsg_non_het){
     if(nums.bern(nums.mt)){new_tsg_non.push_back(het_mu);}
@@ -126,16 +85,37 @@ std::vector<std::size_t> Individual::gamate_tsg_non(Constant& nums){
   for(std::size_t hom_mu: tsg_non_hom){
     new_tsg_non.push_back(hom_mu);
   }
+  /* add mutation */
+  std::poisson_distribution<> pois_tn(nums.tsg_non_site*mut_r);
+  std::uniform_int_distribution<> tn_mut(0, nums.tsg_non_site -1);
+  int tn_num=pois_tn(nums.mt);
+  if(tn_num > 0){
+    while(tn_num > 0){
+      tn_num--;
+      new_tsg_non.push_back(tn_mut(nums.mt));
+    }
+  }
   return new_tsg_non;
 }
 
-std::vector<std::size_t> Individual::gamate_tsg_syn(Constant& nums){
+std::vector<std::size_t> Individual::gamate_tsg_syn(Constant& nums, const Parameters& param){
   std::vector<std::size_t> new_tsg_syn;
   for(std::size_t het_mu: tsg_syn_het){
     if(nums.bern(nums.mt)){new_tsg_syn.push_back(het_mu);}
   }
   for(std::size_t hom_mu: tsg_syn_hom){
     new_tsg_syn.push_back(hom_mu);
+  }
+  /* add mutation */
+  std::poisson_distribution<> pois_ts(nums.tsg_syn_site*mut_r);
+  std::uniform_int_distribution<> ts_mut(0, nums.tsg_syn_site -1);
+  int ts_num=pois_ts(nums.mt);
+  if(ts_num > 0){
+    std::vector<std::size_t> new_tsg_syn;
+    while(ts_num > 0){
+      ts_num--;
+      new_tsg_syn.push_back(ts_mut(nums.mt));
+    }
   }
   return new_tsg_syn;
 }

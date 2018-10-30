@@ -25,18 +25,15 @@ void Population::set_common_variant(const Constant& nums){
 
 /* make offspring from two Individual */
 Individual Population::reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2, bool common_check){
-std::vector<std::size_t> mutater=individuals[i1].gamate_mutater(nums);
-std::vector<std::size_t> mutater2=individuals[i2].gamate_mutater(nums);
-for(std::size_t m=0; m < mutater.size(); m++){
-  mutater[m] += mutater2[m];
-}
+std::size_t mutater = individuals[i1].gamate_mutater(nums,param) + individuals[i2].gamate_mutater(nums,param);
+
 /* tsg nonsynonymous */
-  std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums);
-  std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums);
+  std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums,param);
+  std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums,param);
   tsg_non.insert(tsg_non.end(), tn2.begin(), tn2.end());
 /* tsg synonymous */
-  std::vector<std::size_t> tsg_syn=individuals[i1].gamate_tsg_syn(nums);
-  std::vector<std::size_t> ts2=individuals[i2].gamate_tsg_syn(nums);
+  std::vector<std::size_t> tsg_syn=individuals[i1].gamate_tsg_syn(nums,param);
+  std::vector<std::size_t> ts2=individuals[i2].gamate_tsg_syn(nums,param);
   tsg_syn.insert(tsg_syn.end(), ts2.begin(), ts2.end());
   if(common_check){
     Individual ind(mutater, tsg_non, tsg_syn, tsg_non_common, tsg_syn_common);
@@ -93,7 +90,6 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
   /* add_mutations & set fitness */
   fitness.clear(); fitness.reserve(nums.N);
   for(std::size_t i=0; i < nums.N; i++){
-    individuals[i].add_mutations(nums, param);
     fitness.push_back(individuals[i].get_fitness());
   }
   /* reproduct N individual */
@@ -131,8 +127,7 @@ void Population::correlation_ns(){
     for(std::size_t ts_hom: individuals[i].get_tsg_syn_hom()){
       if(num_tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}
     }
-    std::vector<std::size_t> mut=individuals[i].get_mutater();
-    mutater_num.push_back(std::accumulate(mut.begin(),mut.end(),0));
+    mutater_num.push_back(individuals[i].get_mutater());
     mutation_rate.push_back(individuals[i].get_mut_r());
   }
   double nonav,synav;
