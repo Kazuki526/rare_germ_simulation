@@ -16,7 +16,7 @@ private:
   double fitness;
 public:
   double mut_r;
-  Individual(){};
+  Individual(): mutater(0){};
   Individual(const std::size_t& m,
              const std::vector<std::size_t>& tsg_non,
              const std::vector<std::size_t>& tsg_syn,

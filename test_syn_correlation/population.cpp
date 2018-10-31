@@ -21,8 +21,7 @@ void Population::set_common_variant(const Constant& nums){
 
 /* make offspring from two Individual */
 Individual Population::reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2, bool common_check){
-std::size_t mutater = individuals[i1].gamate_mutater(nums,param) + individuals[i2].gamate_mutater(nums,param);
-
+  std::size_t mutater = individuals[i1].gamate_mutater(nums,param) + individuals[i2].gamate_mutater(nums,param);
 /* tsg nonsynonymous */
   std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums,param);
   std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums,param);

@@ -26,13 +26,14 @@ bool one_replicate(Constant& nums, const Parameters& param,
   std::vector<double> tsg_syn;
   int t=0;
   bool over_mutation=false;
-  while((tn_equiv || ts_equiv) && t < 1000){
+  while((tn_equiv || ts_equiv) && t < 10){
     t++;
     if(t%20==0){
       population.next_generation(nums, param, true);
     }else{
         population.next_generation(nums, param);
     }
+
     if(t<100){
       tsg_non.push_back(population.rare_tsg_non_freq);
       tsg_syn.push_back(population.rare_tsg_syn_freq);
@@ -53,7 +54,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     return(!over_mutation); // return false
   }else{
     std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor,mut,mut_sd,mutr,mutr_sd;
-    for(int time=0; time <= 90; time++){
+    for(int time=0; time <= 0; time++){
       if(time %10 ==0){
         population.correlation_ns();
         //print_out(nums,param,population,outfile);
@@ -106,7 +107,7 @@ int main()
     if(replicate_result){
       std::cout << "done" << time << "time\n";
       time++;
-    }else{std::cout<<"restart: ";}
+    }else{std::cout<<"restart: "<<std::flush;}
   }
 
   return 0;
