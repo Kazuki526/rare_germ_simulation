@@ -78,12 +78,9 @@ std::size_t Individual::gamate_mutater(Constant& nums, const Parameters& param){
 }
 
 std::vector<std::size_t> Individual::gamate_tsg_non(Constant& nums, const Parameters& param){
-  std::vector<std::size_t> new_tsg_non;
+  std::vector<std::size_t> new_tsg_non =tsg_non_hom;
   for(std::size_t het_mu: tsg_non_het){
     if(nums.bern(nums.mt)){new_tsg_non.push_back(het_mu);}
-  }
-  for(std::size_t hom_mu: tsg_non_hom){
-    new_tsg_non.push_back(hom_mu);
   }
   /* add mutation */
   std::poisson_distribution<> pois_tn(nums.tsg_non_site*mut_r);
@@ -99,19 +96,15 @@ std::vector<std::size_t> Individual::gamate_tsg_non(Constant& nums, const Parame
 }
 
 std::vector<std::size_t> Individual::gamate_tsg_syn(Constant& nums, const Parameters& param){
-  std::vector<std::size_t> new_tsg_syn;
+  std::vector<std::size_t> new_tsg_syn=tsg_syn_hom;
   for(std::size_t het_mu: tsg_syn_het){
     if(nums.bern(nums.mt)){new_tsg_syn.push_back(het_mu);}
-  }
-  for(std::size_t hom_mu: tsg_syn_hom){
-    new_tsg_syn.push_back(hom_mu);
   }
   /* add mutation */
   std::poisson_distribution<> pois_ts(nums.tsg_syn_site*mut_r);
   std::uniform_int_distribution<> ts_mut(0, nums.tsg_syn_site -1);
   int ts_num=pois_ts(nums.mt);
   if(ts_num > 0){
-    std::vector<std::size_t> new_tsg_syn;
     while(ts_num > 0){
       ts_num--;
       new_tsg_syn.push_back(ts_mut(nums.mt));

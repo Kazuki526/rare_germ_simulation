@@ -1,15 +1,11 @@
 #include "population.hpp"
 
-Population::Population(const Constant& nums){
+Population::Population(const Constant& nums, const Parameters& param){
   individuals.reserve(nums.N);
   for(std::size_t i=0; i < nums.N; i++){
     Individual ind;
+    ind.set_param(nums,param);
     individuals.push_back(ind);
-  }
-}
-void Population::set_params(const Constant& nums, const Parameters& param){
-  for(std::size_t i=0; i < nums.N; i++){
-    individuals[i].set_param(nums,param);
   }
 }
 

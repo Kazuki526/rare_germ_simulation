@@ -21,14 +21,14 @@ void print_out(const Parameters& param,
 
 bool one_replicate(Constant& nums, const Parameters& param,
                    Population& population, std::ofstream& outfile){
-  population.set_params(nums,param);
   bool tn_equiv=true, ts_equiv=true;
   std::vector<double> tsg_non;
   std::vector<double> tsg_syn;
   int t=0;
   bool over_mutation=false;
   while((tn_equiv || ts_equiv) && t < 1000){
-    if(t!=0 && t%20==0){
+    t++;
+    if(t%20==0){
       population.next_generation(nums, param, true);
     }else{
         population.next_generation(nums, param);
@@ -48,7 +48,6 @@ bool one_replicate(Constant& nums, const Parameters& param,
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*3)){
          over_mutation=true;break;
        }
-    t++;
   }
   if(over_mutation){
     return(!over_mutation); // return false
@@ -102,12 +101,12 @@ int main()
     Parameters param(nums);
     while(param.expected_mutater_freq<1.02){param.reset(nums);}
     param.set_damage(nums);
-    Population population(nums);
+    Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
     if(replicate_result){
       std::cout << "done" << time << "time\n";
       time++;
-    }
+    }else{std::cout<<"restart: ";}
   }
 
   return 0;

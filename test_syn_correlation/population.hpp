@@ -28,8 +28,7 @@ public:
   double rare_tsg_syn_sd;
   double rare_non_syn_correlation;
 
-  Population(const Constant& nums);
-  void set_params(const Constant& nums, const Parameters& param);
+  Population(const Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);
   void next_generation(Constant& nums, const Parameters& param, bool common_variant=false);
   void correlation_ns();
