@@ -52,7 +52,7 @@ Individual::Individual(const std::size_t& m,
 }
 
 void Individual::set_param(const Constant& nums, const Parameters& param){
-  mut_r = nums.mutation_rate;
+  mut_r = param.mutation_rate;
   for(int i=1; i <= mutater; i++){mut_r*=param.mutater_effect;}
   /* set fitness */
   fitness=1;

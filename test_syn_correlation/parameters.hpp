@@ -12,7 +12,6 @@
 struct Constant{
   const std::size_t N = 50000;
   const std::size_t patient_n =6418;
-  const double mutation_rate = 0.0000001;
   const std::size_t tsg_non_site = 191624;
   const std::size_t tsg_syn_site = 61470;
   const double rare_tsg_non_num = 0.92474;
@@ -30,6 +29,7 @@ struct Constant{
 
 struct Parameters
 {
+  double mutation_rate;
   double mutater_effect;
   double mutater_mutation_rate;
   double mutater_damage;
@@ -41,6 +41,7 @@ struct Parameters
   void set_damage(Constant& nums);
 
 private:
+  double get_mutation_rate(Constant& nums);
   double get_mutater_effect(Constant& nums);
   double get_mutater_mutation_rate(Constant& nums);
   double get_mutater_damage(Constant& nums);

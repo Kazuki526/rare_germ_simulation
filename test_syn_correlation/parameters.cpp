@@ -1,6 +1,7 @@
 #include "parameters.hpp"
 
 Parameters::Parameters(Constant& nums){
+  mutation_rate = get_mutation_rate(nums);
   mutater_effect = get_mutater_effect(nums);
   mutater_mutation_rate = get_mutater_mutation_rate(nums);
   mutater_damage = get_mutater_damage(nums);
@@ -28,6 +29,10 @@ void Parameters::set_damage(Constant& nums){
   }
 }
 
+double Parameters::get_mutation_rate(Constant& nums){
+  std::uniform_real_distribution<> dist(0.00000001,0.00000008);
+  return dist(nums.mt);
+}
 double Parameters::get_mutater_effect(Constant& nums){
   std::uniform_real_distribution<> dist(2.0, 100.0);
   return dist(nums.mt);

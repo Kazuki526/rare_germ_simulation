@@ -3,6 +3,7 @@
 
 void print_out(const Parameters& param,
                const Population& population, std::ofstream& outfile){
+  outfile << param.mutation_rate <<"\t";
   outfile << param.mutater_effect <<"\t";
   outfile << param.mutater_mutation_rate <<"\t";
   outfile << param.mutater_damage <<"\t";
@@ -90,7 +91,7 @@ int main()
 {
   std::ofstream outfile;
   outfile.open("simulation_result.tsv", std::ios::out);
-  outfile << "generation\tmutater_effect\t";
+  outfile << "generation\tmutation_rate\tmutater_effect\t";
   outfile << "mutater_mutation_rate\tmutater_damage\ttsg_non_damage_e\t";
   outfile << "tsg_non_num\ttsg_non_sd\t";
   outfile << "tsg_syn_num\ttsg_syn_sd\t";
