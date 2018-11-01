@@ -26,6 +26,18 @@ public:
   double rare_tsg_syn_freq;
   double rare_tsg_non_sd;
   double rare_tsg_syn_sd;
+  double mut0_rare_non_num;
+  double mut1_rare_non_num;
+  double mut2_rare_non_num;
+  double mut0_notrare_non_num;
+  double mut1_notrare_non_num;
+  double mut2_notrare_non_num;
+  double mut0_rare_syn_num;
+  double mut1_rare_syn_num;
+  double mut2_rare_syn_num;
+  double mut0_notrare_syn_num;
+  double mut1_notrare_syn_num;
+  double mut2_notrare_syn_num;
   double rare_non_syn_correlation;
 
   Population(const Constant& nums, const Parameters& param);

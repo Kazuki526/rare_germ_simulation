@@ -106,21 +106,21 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
 void Population::correlation_ns(){
   const int N =individuals.size();
   const int rare = N/1000;
-  std::vector<int> non_rare_num(N,0), syn_rare_num(N,0);
+  std::vector<int> non_rare_num(N,0), syn_rare_num(N,0),non_notrare_num(N,0), syn_notrare_num(N,0);
   std::vector<std::size_t> mutater_num; mutater_num.reserve(N);
   std::vector<double> mutation_rate; mutation_rate.reserve(N);
   for(std::size_t i=0; i < N;i++){
     for(std::size_t tn_het: individuals[i].get_tsg_non_het()){
-      if(num_tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}
+      if(num_tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}else{non_notrare_num[i]++;}
     }
     for(std::size_t tn_hom: individuals[i].get_tsg_non_hom()){
-      if(num_tsg_non_mutation[tn_hom] < rare){non_rare_num[i]+=2;}
+      if(num_tsg_non_mutation[tn_hom] < rare){non_rare_num[i]+=2;}else{non_notrare_num[i]+=2;}
     }
     for(std::size_t ts_het: individuals[i].get_tsg_syn_het()){
-      if(num_tsg_syn_mutation[ts_het] < rare){syn_rare_num[i]++;}
+      if(num_tsg_syn_mutation[ts_het] < rare){syn_rare_num[i]++;}else{syn_notrare_num[i]++;}
     }
     for(std::size_t ts_hom: individuals[i].get_tsg_syn_hom()){
-      if(num_tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}
+      if(num_tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}else{syn_notrare_num[i]+=2;}
     }
     mutater_num.push_back(individuals[i].get_mutater());
     mutation_rate.push_back(individuals[i].get_mut_r());
@@ -131,13 +131,38 @@ void Population::correlation_ns(){
   mutater_freq = (double)std::accumulate(mutater_num.begin(),mutater_num.end(),0)/N;
   mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/N;
   double nonv=0.0, synv=0.0, nonsynv=0.0, mutv=0.0, mutrv=0.0;
+  std::size_t mut0=0, mut1=0, mut2=0;
   for(std::size_t i=0; i < N; i++){
     nonv+=(double)((non_rare_num[i]-nonav)*(non_rare_num[i]-nonav));
     synv+=(double)((syn_rare_num[i]-synav)*(syn_rare_num[i]-synav));
     nonsynv+=(double)((non_rare_num[i]-nonav)*(syn_rare_num[i]-synav));
     mutv+=(double)((mutater_num[i]-mutater_freq)*(mutater_num[i]-mutater_freq));
     mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
+
+    if(mutater_num[i]==0){mut0++;
+      mut0_rare_non_num+=non_rare_num[i];mut0_notrare_non_num+=non_notrare_num[i];
+      mut0_rare_syn_num+=syn_rare_num[i];mut0_notrare_syn_num+=syn_notrare_num[i];
+    }else if(mutater_num[i]==1){mut1++;
+      mut1_rare_non_num+=non_rare_num[i];mut1_notrare_non_num+=non_notrare_num[i];
+      mut1_rare_syn_num+=syn_rare_num[i];mut1_notrare_syn_num+=syn_notrare_num[i];
+    }else{mut2++;
+      mut2_rare_non_num+=non_rare_num[i];mut2_notrare_non_num+=non_notrare_num[i];
+      mut2_rare_syn_num+=syn_rare_num[i];mut2_notrare_syn_num+=syn_notrare_num[i];
+    }
   }
+  if(mut2==0){mut2=1;}
+  mut0_rare_non_num/=mut0;
+  mut1_rare_non_num/=mut1;
+  mut2_rare_non_num/=mut2;
+  mut0_notrare_non_num/=mut0;
+  mut1_notrare_non_num/=mut1;
+  mut2_notrare_non_num/=mut2;
+  mut0_rare_syn_num/=mut0;
+  mut1_rare_syn_num/=mut1;
+  mut2_rare_syn_num/=mut2;
+  mut0_notrare_syn_num/=mut0;
+  mut1_notrare_syn_num/=mut1;
+  mut2_notrare_syn_num/=mut2;
   rare_tsg_non_sd = std::sqrt((double)nonv/N);
   rare_tsg_syn_sd = std::sqrt((double)synv/N);
   rare_non_syn_correlation = (double)(nonsynv/N)/(rare_tsg_non_sd*rare_tsg_syn_sd);

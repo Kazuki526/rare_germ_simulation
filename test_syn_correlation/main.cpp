@@ -12,6 +12,18 @@ void print_out(const Parameters& param,
   outfile << population.rare_tsg_non_sd <<"\t";
   outfile << population.rare_tsg_syn_freq << "\t";
   outfile << population.rare_tsg_syn_sd <<"\t";
+  outfile << population.mut0_rare_non_num<<"\t";
+  outfile << population.mut1_rare_non_num<<"\t";
+  outfile << population.mut2_rare_non_num<<"\t";
+  outfile << population.mut0_notrare_non_num<<"\t";
+  outfile << population.mut1_notrare_non_num<<"\t";
+  outfile << population.mut2_notrare_non_num<<"\t";
+  outfile << population.mut0_rare_syn_num<<"\t";
+  outfile << population.mut1_rare_syn_num<<"\t";
+  outfile << population.mut2_rare_syn_num<<"\t";
+  outfile << population.mut0_notrare_syn_num<<"\t";
+  outfile << population.mut1_notrare_syn_num<<"\t";
+  outfile << population.mut2_notrare_syn_num<<"\t";
   outfile << population.mutater_freq << "\t";
   outfile << population.mutater_sd << "\t";
   outfile << population.mutation_rate_ave << "\t";
@@ -55,6 +67,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     return(!over_mutation); // return false
   }else{
     std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor,mut,mut_sd,mutr,mutr_sd;
+    std::vector<double> tn_0r,tn_1r,tn_2r,tn_0nr,tn_1nr,tn_2nr,ts_0r,ts_1r,ts_2r,ts_0nr,ts_1nr,ts_2nr;
     for(int time=0; time <= 90; time++){
       if(time %10 ==0){
         population.correlation_ns();
@@ -68,6 +81,18 @@ bool one_replicate(Constant& nums, const Parameters& param,
         mut_sd.push_back(population.mutater_sd);
         mutr.push_back(population.mutation_rate_ave);
         mutr_sd.push_back(population.mutation_rate_sd);
+        tn_0r.push_back(population.mut0_rare_non_num);
+        tn_1r.push_back(population.mut1_rare_non_num);
+        tn_2r.push_back(population.mut2_rare_non_num);
+        tn_0nr.push_back(population.mut0_notrare_non_num);
+        tn_1nr.push_back(population.mut1_notrare_non_num);
+        tn_2nr.push_back(population.mut2_notrare_non_num);
+        ts_0r.push_back(population.mut0_rare_syn_num);
+        ts_1r.push_back(population.mut1_rare_syn_num);
+        ts_2r.push_back(population.mut2_rare_syn_num);
+        ts_0nr.push_back(population.mut0_notrare_syn_num);
+        ts_1nr.push_back(population.mut1_notrare_syn_num);
+        ts_2nr.push_back(population.mut2_notrare_syn_num);
         population.next_generation(nums,param,true);
       }else{
         population.next_generation(nums,param);
@@ -95,6 +120,10 @@ int main()
   outfile << "mutater_mutation_rate\tmutater_damage\ttsg_non_damage_e\t";
   outfile << "tsg_non_num\ttsg_non_sd\t";
   outfile << "tsg_syn_num\ttsg_syn_sd\t";
+  outfile << "mut0_rare_non_num\tmut1_rare_non_num\tmut2_rare_non_num\t";
+  outfile << "mut0_notrare_non_num\tmut1_notrare_non_num\tmut2_notrare_non_num\t";
+  outfile << "mut0_rare_syn_num\tmut1_rare_syn_num\tmut2_rare_syn_num\t";
+  outfile << "mut0_notrare_syn_num\tmut1_notrare_syn_num\tmut2_notrare_syn_num\t";
   outfile << "mutater_freq\tmutater_sd\tmutation_rate_freq\tmutation_rate_sd\t";
   outfile << "correlation\n";
   Constant nums;
