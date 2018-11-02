@@ -15,7 +15,9 @@ struct Constant{
   const std::size_t tsg_non_site = 191624;
   const std::size_t tsg_syn_site = 61470;
   const double rare_tsg_non_num = 0.92474;
+  const double rare_tsg_non_sd = 1.004913;
   const double rare_tsg_syn_num = 0.6611;
+  const double rare_tsg_syn_sd = 0.8668836;
   std::mt19937 mt;
   std::bernoulli_distribution bern;
   Constant(){
@@ -35,7 +37,7 @@ struct Parameters
   double mutater_damage;
   double tsg_non_damage_e;
   std::vector<double> tsg_non_damage;
-  double expected_mutater_freq;
+  double expected_mutation_sd;
   Parameters(Constant& nums);
   void reset(Constant& nums);
   void set_damage(Constant& nums);

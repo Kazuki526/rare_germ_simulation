@@ -58,8 +58,8 @@ bool one_replicate(Constant& nums, const Parameters& param,
       tn_equiv = equiv_lm(tsg_non);
       ts_equiv = equiv_lm(tsg_syn);
     }
-    if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*3)||
-       (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*3)){
+    if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
+       (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){
          over_mutation=true;break;
        }
   }
@@ -149,9 +149,9 @@ int main()
   outfile << "correlation\n";
   Constant nums;
   int time=1;
-  while(time <4000){
+  while(time <5000){
     Parameters param(nums);
-    while(param.expected_mutater_freq<1.02){param.reset(nums);}
+    while(param.expected_mutation_sd<0.0000012 || param.expected_mutation_sd>0.0000035){param.reset(nums);}
     param.set_damage(nums);
     Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
