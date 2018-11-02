@@ -92,7 +92,15 @@ bool one_replicate(Constant& nums, const Parameters& param,
         ts_2r.push_back(population.mut2_rare_syn_num);
         ts_0nr.push_back(population.mut0_notrare_syn_num);
         ts_1nr.push_back(population.mut1_notrare_syn_num);
-        ts_2nr.push_back(population.mut2_notrare_syn_num);
+        if(population.mut2_rare_non_num != 0.0 &&
+           population.mut2_notrare_non_num != 0.0 &&
+           population.mut2_rare_syn_num != 0.0 &&
+           population.mut2_notrare_syn_num != 0.0){
+             tn_2r.push_back(population.mut2_rare_non_num);
+             tn_2nr.push_back(population.mut2_notrare_non_num);
+             ts_2r.push_back(population.mut2_rare_syn_num);
+             ts_2nr.push_back(population.mut2_notrare_syn_num);
+           }
         population.next_generation(nums,param,true);
       }else{
         population.next_generation(nums,param);
@@ -107,7 +115,18 @@ bool one_replicate(Constant& nums, const Parameters& param,
     population.mutater_sd = (double)std::accumulate(mut_sd.begin(),mut_sd.end(),0.0) /mut_sd.size();
     population.mutation_rate_ave = (double)std::accumulate(mutr.begin(),mutr.end(),0.0) /mutr.size();
     population.mutation_rate_sd = (double)std::accumulate(mutr_sd.begin(),mutr_sd.end(),0.0) /mutr_sd.size();
-    outfile << t << "\t";
+    population.mut0_rare_non_num = (double)std::accumulate(tn_0r.begin(),tn_0r.end(),0.0) /tn_0r.size();
+    population.mut1_rare_non_num = (double)std::accumulate(tn_1r.begin(),tn_1r.end(),0.0) /tn_1r.size();
+    population.mut2_rare_non_num = (double)std::accumulate(tn_2r.begin(),tn_2r.end(),0.0) /tn_2r.size();
+    population.mut0_notrare_non_num = (double)std::accumulate(tn_0nr.begin(),tn_0nr.end(),0.0) /tn_0nr.size();
+    population.mut1_notrare_non_num = (double)std::accumulate(tn_1nr.begin(),tn_1nr.end(),0.0) /tn_1nr.size();
+    population.mut2_notrare_non_num = (double)std::accumulate(tn_2nr.begin(),tn_2nr.end(),0.0) /tn_2nr.size();
+    population.mut0_rare_syn_num = (double)std::accumulate(ts_0r.begin(),ts_0r.end(),0.0) /ts_0r.size();
+    population.mut1_rare_syn_num = (double)std::accumulate(ts_1r.begin(),ts_1r.end(),0.0) /ts_1r.size();
+    population.mut2_rare_syn_num = (double)std::accumulate(ts_2r.begin(),ts_2r.end(),0.0) /ts_2r.size();
+    population.mut0_notrare_syn_num = (double)std::accumulate(ts_0nr.begin(),ts_0nr.end(),0.0) /ts_0nr.size();
+    population.mut1_notrare_syn_num = (double)std::accumulate(ts_1nr.begin(),ts_1nr.end(),0.0) /ts_1nr.size();
+    population.mut2_notrare_syn_num = (double)std::accumulate(ts_2nr.begin(),ts_2nr.end(),0.0) /ts_2nr.size();
     print_out(param,population,outfile);
     return(!over_mutation); // return true
   }
