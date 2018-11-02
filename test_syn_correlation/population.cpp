@@ -139,6 +139,10 @@ void Population::correlation_ns(){
     mutv+=(double)((mutater_num[i]-mutater_freq)*(mutater_num[i]-mutater_freq));
     mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
 
+    mut0_rare_non_num=0; mut1_rare_non_num=0; mut2_rare_non_num=0;
+    mut0_notrare_non_num=0; mut1_notrare_non_num=0; mut2_notrare_non_num=0;
+    mut0_rare_syn_num=0; mut1_rare_syn_num=0; mut2_rare_syn_num=0;
+    mut0_notrare_syn_num=0; mut1_notrare_syn_num=0; mut2_notrare_syn_num=0;
     if(mutater_num[i]==0){mut0++;
       mut0_rare_non_num+=non_rare_num[i];mut0_notrare_non_num+=non_notrare_num[i];
       mut0_rare_syn_num+=syn_rare_num[i];mut0_notrare_syn_num+=syn_notrare_num[i];
