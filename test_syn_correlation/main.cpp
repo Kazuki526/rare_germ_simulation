@@ -151,7 +151,7 @@ int main()
   int time=1;
   while(time <5000){
     Parameters param(nums);
-    while(param.expected_mutation_sd<0.0000012 || param.expected_mutation_sd>0.0000035){param.reset(nums);}
+    while(param.expected_mutation_sd<0.0000012){param.reset(nums);}
     param.set_damage(nums);
     Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
