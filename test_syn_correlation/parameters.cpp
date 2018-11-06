@@ -1,8 +1,8 @@
 #include "parameters.hpp"
 
 Parameters::Parameters(Constant& nums){
-  mutation_rate = get_mutation_rate(nums);
-  mutater_effect = get_mutater_effect(nums);
+  mutation_rate = 0.00000003;//get_mutation_rate(nums);
+  mutater_effect = 30;//get_mutater_effect(nums);
   mutater_mutation_rate = get_mutater_mutation_rate(nums);
   mutater_damage = get_mutater_damage(nums);
   tsg_non_damage_e = get_tsg_non_damage_e(nums);
@@ -51,7 +51,7 @@ double Parameters::get_mutater_damage(Constant& nums){
   return dist(nums.mt);
 }
 double Parameters::get_tsg_non_damage_e(Constant& nums){
-  std::uniform_real_distribution<> dist(0.015, 0.05);
+  std::uniform_real_distribution<> dist(0.001, 0.05);
   return dist(nums.mt);
 }
 
@@ -65,13 +65,16 @@ double log_random(double start, double end, std::mt19937& mt){
 bool equiv_lm(const std::vector<double>& mutation) {
   bool focal=true;
   std::size_t vect_size = mutation.size();
-  double xy=0, xx=0 , average=0;
+  double xy=0.0, xx=0.0, yy=0.0, average=0.0;
   for(double i: mutation){average+=i;}
   average =(double) average/vect_size;
   double x_ave = (double)(1+vect_size)/2;
   for(std::size_t t=0; t < vect_size; t++){
-    xx += (x_ave-t)*(x_ave-t); xy += (x_ave-t)*(average-mutation[t]);
+    xx += (x_ave-t)*(x_ave-t);
+    yy += (average-mutation[t])*(average-mutation[t]);
+    xy += (x_ave-t)*(average-mutation[t]);
   }
-  if((double)average/5000 > xy/xx){focal=false;}
+  //if((double)average/5000 > xy/xx){focal=false;}
+  if(std::fabs(xy/(std::pow(xx,0.5)*std::pow(yy,0.5))) < 0.05){focal=false;}
   return focal;
 }

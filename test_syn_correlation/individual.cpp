@@ -57,8 +57,10 @@ void Individual::set_param(const Constant& nums, const Parameters& param){
   /* set fitness */
   fitness=1;
   for(int i=1; i <= mutater; i++){fitness*=(1-param.mutater_damage);}
-  for(std::size_t mu: tsg_non_het){fitness*=(1-param.tsg_non_damage[mu]);}
-  for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
+  //for(std::size_t mu: tsg_non_het){fitness*=(1-param.tsg_non_damage[mu]);}
+  //for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
+  for(std::size_t m=0; m < tsg_non_het.size();m++){fitness*=(1-param.tsg_non_damage_e);}
+  for(std::size_t m=0; m < tsg_non_hom.size();m++){fitness*=((1-param.tsg_non_damage_e)*(1-param.tsg_non_damage_e));}
 }
 
 /* gamate methods */
