@@ -2,10 +2,10 @@
 
 Parameters::Parameters(Constant& nums){
   mutation_rate = 0.00000003;//get_mutation_rate(nums);
-  mutater_effect = 30;//get_mutater_effect(nums);
-  mutater_mutation_rate = get_mutater_mutation_rate(nums);
-  mutater_damage = get_mutater_damage(nums);
-  tsg_non_damage_e = get_tsg_non_damage_e(nums);
+  mutater_effect = 80;//get_mutater_effect(nums);
+  mutater_mutation_rate = 0.00025; //get_mutater_mutation_rate(nums);
+  mutater_damage = 0.008; //get_mutater_damage(nums);
+  tsg_non_damage_e = 0.025; //get_tsg_non_damage_e(nums);
 
   double m=mutater_mutation_rate, s=mutater_damage, e=mutater_effect;
   double p = m/s+0.5-m/2-std::pow((m/s+(1-m)/2)*(m/s+(1-m)/2)-m/s,0.5);
@@ -36,22 +36,23 @@ void Parameters::set_damage(Constant& nums){
 }
 
 double Parameters::get_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0.00000001,0.00000006);
+  std::uniform_real_distribution<> dist(0.00000002,0.00000004);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){
-  std::uniform_real_distribution<> dist(2.0, 100.0);
+  std::uniform_real_distribution<> dist(70.0, 90.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_mutation_rate(Constant& nums){
-  return log_random(0.0001, 0.01, nums.mt);
+  std::uniform_real_distribution<> dist(0.0002, 0.0003);
+  return dist(nums.mt);
 }
 double Parameters::get_mutater_damage(Constant& nums){
-  std::uniform_real_distribution<> dist(0.0, 0.01);
+  std::uniform_real_distribution<> dist(0.007, 0.009);
   return dist(nums.mt);
 }
 double Parameters::get_tsg_non_damage_e(Constant& nums){
-  std::uniform_real_distribution<> dist(0.001, 0.05);
+  std::uniform_real_distribution<> dist(0.002, 0.003);
   return dist(nums.mt);
 }
 
@@ -75,6 +76,6 @@ bool equiv_lm(const std::vector<double>& mutation) {
     xy += (x_ave-t)*(average-mutation[t]);
   }
   //if((double)average/5000 > xy/xx){focal=false;}
-  if(std::fabs(xy/(std::pow(xx,0.5)*std::pow(yy,0.5))) < 0.05){focal=false;}
+  if(std::fabs(xy/(std::pow(xx,0.5)*std::pow(yy,0.5))) < 0.1){focal=false;}
   return focal;
 }
