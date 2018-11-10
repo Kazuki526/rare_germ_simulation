@@ -33,8 +33,7 @@ void print_out(const Parameters& param,
 }
 
 bool one_replicate(Constant& nums, const Parameters& param,
-                   Population& population, std::ofstream& outfile,
-                   int time,std::ofstream& equiv){
+                   Population& population, std::ofstream& outfile){
   bool tn_equiv=true, ts_equiv=true;
   std::vector<double> tsg_non;
   std::vector<double> tsg_syn;
@@ -63,7 +62,6 @@ bool one_replicate(Constant& nums, const Parameters& param,
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){
          over_mutation=true;break;
        }
-    equiv << time <<"\t"<< t <<"\t"<< population.rare_tsg_non_freq <<"\t"<< population.rare_tsg_syn_freq <<"\n";
   }
   if(over_mutation){
     return(!over_mutation); // return false
@@ -149,9 +147,6 @@ int main()
   outfile << "mut0_notrare_syn_num\tmut1_notrare_syn_num\tmut2_notrare_syn_num\t";
   outfile << "mutater_freq\tmutater_sd\tmutation_rate_freq\tmutation_rate_sd\t";
   outfile << "correlation\n";
-  std::ofstream equiv;
-  equiv.open("~/simulate/test_equilibrium/test_equilibrium2.tsv", std::ios::out);
-  equiv << "replicate\tgeneration\ttsg_non\ttsg_syn\n";
   Constant nums;
   int time=1;
   while(time <=2000){
@@ -159,7 +154,7 @@ int main()
     while(param.expected_mutation_sd<0.0000012){param.reset(nums);}
     param.set_damage(nums);
     Population population(nums,param);
-    bool replicate_result = one_replicate(nums, param, population, outfile,time,equiv);
+    bool replicate_result = one_replicate(nums, param, population, outfile);
     if(replicate_result){
       std::cout << "done" << time << "time\n";
       time++;
