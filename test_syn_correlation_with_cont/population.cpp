@@ -14,7 +14,8 @@ void Population::set_common_variant(const Constant& nums){
   for(std::size_t m=0; m < nums.tsg_non_site; m++){
     if(num_tsg_non_mutation[m] > common_num){tsg_non_common.insert(m);}
   }
-  for(std::size_t m=0; m < nums.tsg_syn_site; m++){
+  //for(std::size_t m=0; m < nums.tsg_syn_site; m++){
+  for(std::size_t m=0; m < nums.syn_site; m++){
     if(num_tsg_syn_mutation[m] > common_num){tsg_syn_common.insert(m);}
   }
   for(std::size_t m=0; m < nums.cont_non_site; m++){
@@ -70,7 +71,8 @@ void Population::mutation_count(const Constant& nums, const Parameters& param){
   }
 /* tsg synonymous */
   num_tsg_syn_mutation.clear();
-  num_tsg_syn_mutation.resize(nums.tsg_syn_site);
+  //num_tsg_syn_mutation.resize(nums.tsg_syn_site);
+  num_tsg_syn_mutation.resize(nums.syn_site);
   for(Individual &ind: individuals){
     for(std::size_t het_mu: ind.get_tsg_syn_het()){
       num_tsg_syn_mutation[het_mu]++;
@@ -80,7 +82,8 @@ void Population::mutation_count(const Constant& nums, const Parameters& param){
     }
   }
   rare_tsg_syn_freq=0;
-  for(std::size_t mu=0; mu < nums.tsg_syn_site; mu++){
+  //for(std::size_t mu=0; mu < nums.tsg_syn_site; mu++){
+  for(std::size_t mu=0; mu < nums.syn_site; mu++){
     if(num_tsg_syn_mutation[mu] < rare){
       rare_tsg_syn_freq += (double) num_tsg_syn_mutation[mu] /nums.N;
     }

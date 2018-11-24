@@ -1,4 +1,6 @@
 #include <fstream>
+#include <stdio.h>
+#include <string>
 #include "population.hpp"
 
 void print_out(const Parameters& param,
@@ -50,7 +52,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
   std::vector<double> cont_non;
   int t=0;
   bool over_mutation=false;
-  while((tn_equiv || ts_equiv || cn_equiv) && t < 1000){
+  while((tn_equiv || ts_equiv || cn_equiv) && t < 2000){
     t++;
     if(t%20==0){
       population.next_generation(nums, param, true);
@@ -58,7 +60,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
         population.next_generation(nums, param);
     }
 
-    if(t<100){
+    if(t<500){
       tsg_non.push_back(population.rare_tsg_non_freq);
       tsg_syn.push_back(population.rare_tsg_syn_freq);
       cont_non.push_back(population.rare_cont_non_freq);
@@ -174,10 +176,9 @@ bool one_replicate(Constant& nums, const Parameters& param,
     return(!over_mutation); // return true
   }
 }
-int main()
-{
+int main(int argc,char *argv[]){
   std::ofstream outfile;
-  outfile.open("simulation_result.tsv", std::ios::out);
+  outfile.open("simulation_result"+std::string(argv[1])+".tsv", std::ios::out);
   outfile << "generation\tmutation_rate\tmutater_effect\t";
   outfile << "mutater_mutation_rate\tmutater_damage\ttsg_non_damage_e\tcont_non_damage_e\t";
   outfile << "tsg_non_num\ttsg_non_sd\ttsg_syn_num\ttsg_syn_sd\tcont_non_num\tcont_non_sd\t";
@@ -191,9 +192,9 @@ int main()
   outfile << "non_syn_correlation\ttsg_cont_correlation\n";
   Constant nums;
   int time=1;
-  while(time <4000){
+  while(time <= 2500){
     Parameters param(nums);
-    while(param.expected_mutation_sd<0.000001 || param.expected_mutation_sd>0.000005){param.reset(nums);}
+    while(param.expected_mutation_sd<0.0000015){param.reset(nums);}
     param.set_damage(nums);
     Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);

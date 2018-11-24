@@ -41,26 +41,26 @@ void Parameters::set_damage(Constant& nums){
 }
 
 double Parameters::get_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0.00000001,0.00000006);
+  std::uniform_real_distribution<> dist(0.00000002,0.00000004);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){
-  std::uniform_real_distribution<> dist(2.0, 100.0);
+  std::uniform_real_distribution<> dist(70.0, 120.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_mutation_rate(Constant& nums){
-  return log_random(0.0001, 0.01, nums.mt);
+  return log_random(0.0003, 0.0006, nums.mt);
 }
 double Parameters::get_mutater_damage(Constant& nums){
-  std::uniform_real_distribution<> dist(0.0, 0.01);
+  std::uniform_real_distribution<> dist(0.001, 0.008);
   return dist(nums.mt);
 }
 double Parameters::get_tsg_non_damage_e(Constant& nums){
-  std::uniform_real_distribution<> dist(0.015, 0.05);
+  std::uniform_real_distribution<> dist(0.015, 0.03);
   return dist(nums.mt);
 }
 double Parameters::get_cont_non_damage_e(Constant& nums){
-  std::uniform_real_distribution<> dist(0.01, 0.05);
+  std::uniform_real_distribution<> dist(0.01, 0.03);
   return dist(nums.mt);
 }
 
@@ -74,13 +74,17 @@ double log_random(double start, double end, std::mt19937& mt){
 bool equiv_lm(const std::vector<double>& mutation) {
   bool focal=true;
   std::size_t vect_size = mutation.size();
-  double xy=0, xx=0 , average=0;
+  double xy=0.0, xx=0.0, average=0.0;
+  //double yy=0.0;
   for(double i: mutation){average+=i;}
   average =(double) average/vect_size;
   double x_ave = (double)(1+vect_size)/2;
   for(std::size_t t=0; t < vect_size; t++){
-    xx += (x_ave-t)*(x_ave-t); xy += (x_ave-t)*(average-mutation[t]);
+    xx += (x_ave-t)*(x_ave-t);
+    //yy += (average-mutation[t])*(average-mutation[t]);
+    xy += (x_ave-t)*(average-mutation[t]);
   }
-  if((double)average/5000 > xy/xx){focal=false;}
+  if((double)average/10000.0 > std::fabs(xy/xx)){focal=false;}
+  //if(std::fabs(xy/(std::pow(xx,0.5)*std::pow(yy,0.5))) < 0.1){focal=false;}
   return focal;
 }

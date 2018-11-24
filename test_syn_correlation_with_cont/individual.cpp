@@ -78,10 +78,14 @@ void Individual::set_param(const Constant& nums, const Parameters& param){
   /* set fitness */
   fitness=1;
   for(int i=1; i <= mutater; i++){fitness*=(1-param.mutater_damage);}
-  for(std::size_t mu: tsg_non_het){fitness*=(1-param.tsg_non_damage[mu]);}
-  for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
-  for(std::size_t mu: cont_non_het){fitness*=(1-param.cont_non_damage[mu]);}
-  for(std::size_t mu: cont_non_hom){fitness*=((1-param.cont_non_damage[mu])*(1-param.cont_non_damage[mu]));}
+  //for(std::size_t mu: tsg_non_het){fitness*=(1-param.tsg_non_damage[mu]);}
+  //for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
+  //for(std::size_t mu: cont_non_het){fitness*=(1-param.cont_non_damage[mu]);}
+  //for(std::size_t mu: cont_non_hom){fitness*=((1-param.cont_non_damage[mu])*(1-param.cont_non_damage[mu]));}
+  for(std::size_t m=0; m < tsg_non_het.size();m++){fitness*=(1-param.tsg_non_damage_e);}
+  for(std::size_t m=0; m < tsg_non_hom.size();m++){fitness*=((1-param.tsg_non_damage_e)*(1-param.tsg_non_damage_e));}
+  for(std::size_t m=0; m < cont_non_het.size();m++){fitness*=(1-param.cont_non_damage_e);}
+  for(std::size_t m=0; m < cont_non_hom.size();m++){fitness*=((1-param.cont_non_damage_e)*(1-param.cont_non_damage_e));}
 }
 
 /* gamate methods */
@@ -124,8 +128,10 @@ std::vector<std::size_t> Individual::gamate_tsg_syn(Constant& nums, const Parame
     if(nums.bern(nums.mt)){new_tsg_syn.push_back(het_mu);}
   }
   /* add mutation */
-  std::poisson_distribution<> pois_ts(nums.tsg_syn_site*mut_r);
-  std::uniform_int_distribution<> ts_mut(0, nums.tsg_syn_site -1);
+  //std::poisson_distribution<> pois_ts(nums.tsg_syn_site*mut_r);
+  //std::uniform_int_distribution<> ts_mut(0, nums.tsg_syn_site -1);
+  std::poisson_distribution<> pois_ts(nums.syn_site*mut_r);
+  std::uniform_int_distribution<> ts_mut(0, nums.syn_site -1);
   int ts_num=pois_ts(nums.mt);
   if(ts_num > 0){
     while(ts_num > 0){
