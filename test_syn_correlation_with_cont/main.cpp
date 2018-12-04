@@ -76,7 +76,8 @@ bool one_replicate(Constant& nums, const Parameters& param,
       cn_equiv = equiv_lm(cont_non);
     }
     if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
-       (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)||
+       //(population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)||
+       (population.rare_tsg_syn_freq > nums.rare_syn_num*2)||
        (population.rare_cont_non_freq > nums.rare_cont_non_num*2)){
          over_mutation=true;break;
        }

@@ -1,15 +1,11 @@
 #include "population.hpp"
 
-Population::Population(const Constant& nums){
+Population::Population(const Constant& nums, const Parameters& param){
   individuals.reserve(nums.N);
   for(std::size_t i=0; i < nums.N; i++){
     Individual ind;
+    ind.set_param(nums,param);
     individuals.push_back(ind);
-  }
-}
-void Population::set_params(const Constant& nums, const Parameters& param){
-  for(std::size_t i=0; i < nums.N; i++){
-    individuals[i].set_param(nums,param);
   }
 }
 
@@ -29,19 +25,19 @@ void Population::set_common_variant(const Constant& nums){
 /* make offspring from two Individual */
 Individual Population::reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2, bool common_check){
   int mutater =
-      individuals[i1].gamate_mutater(nums) +
-      individuals[i2].gamate_mutater(nums);
+      individuals[i1].gamate_mutater(nums,param) +
+      individuals[i2].gamate_mutater(nums,param);
 /* tsg nonsynonymous */
-  std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums);
-  std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums);
+  std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums,param);
+  std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums,param);
   tsg_non.insert(tsg_non.end(), tn2.begin(), tn2.end());
 /* tsg synonymous */
-  std::vector<std::size_t> tsg_syn=individuals[i1].gamate_tsg_syn(nums);
-  std::vector<std::size_t> ts2=individuals[i2].gamate_tsg_syn(nums);
+  std::vector<std::size_t> tsg_syn=individuals[i1].gamate_tsg_syn(nums,param);
+  std::vector<std::size_t> ts2=individuals[i2].gamate_tsg_syn(nums,param);
   tsg_syn.insert(tsg_syn.end(), ts2.begin(), ts2.end());
 /* control nonsynonymous */
-  std::vector<std::size_t> cont_non=individuals[i1].gamate_cont_non(nums);
-  std::vector<std::size_t> cn2=individuals[i2].gamate_cont_non(nums);
+  std::vector<std::size_t> cont_non=individuals[i1].gamate_cont_non(nums,param);
+  std::vector<std::size_t> cn2=individuals[i2].gamate_cont_non(nums,param);
   cont_non.insert(cont_non.end(), cn2.begin(), cn2.end());
   if(common_check){
     Individual ind(mutater, tsg_non, tsg_syn, cont_non, tsg_non_common, tsg_syn_common, cont_non_common);
@@ -115,7 +111,6 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
   /* add_mutations & set fitness */
   fitness.clear(); fitness.reserve(nums.N);
   for(std::size_t i=0; i < nums.N; i++){
-    individuals[i].add_mutations(nums, param);
     fitness.push_back(individuals[i].get_fitness());
   }
   /* reproduct N individual */

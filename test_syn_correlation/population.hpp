@@ -39,6 +39,7 @@ public:
   double mut1_notrare_syn_num;
   double mut2_notrare_syn_num;
   double rare_non_syn_correlation;
+  double rare_num_reg;
 
   Population(const Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);

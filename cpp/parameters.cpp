@@ -19,11 +19,11 @@ Parameters::Parameters(Constant& nums){
   cont_non_fitness_only = (bool)get_cont_non_fitness_only(nums);
   fitness_coef = get_fitness_coef(nums);
 
-  std::exponential_distribution<> tsg_ex(tsg_non_damage_e);
+  std::exponential_distribution<> tsg_ex(1/tsg_non_damage_e);
   for(std::size_t s=0; nums.tsg_non_site > s; s++){
     tsg_non_damage.push_back(tsg_ex(nums.mt));
   }
-  std::exponential_distribution<> cont_ex(cont_non_damage_e);
+  std::exponential_distribution<> cont_ex(1/cont_non_damage_e);
   for(std::size_t s=0; nums.cont_non_site > s; s++){
     cont_non_damage.push_back(cont_ex(nums.mt));
   }
@@ -130,7 +130,7 @@ void Parameters::change_param(Constant& nums,const std::size_t time){
 }*/
 
 double Parameters::get_mutation_rate_coef(Constant& nums){
-  std::uniform_real_distribution<> dist(10.0, 15.0);
+  std::uniform_real_distribution<> dist(1.0, 5.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){

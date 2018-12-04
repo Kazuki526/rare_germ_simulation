@@ -28,8 +28,7 @@ public:
   double tsg_syn_regression;
   double cont_non_regression;
 
-  Population(const Constant& nums);
-  void set_params(const Constant& nums, const Parameters& param);
+  Population(const Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);
   void next_generation(Constant& nums, const Parameters& param, bool common_variant=false);
   void regression_onset_age(Constant& nums, const Parameters& param);

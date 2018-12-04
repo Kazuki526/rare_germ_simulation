@@ -1,4 +1,6 @@
 #include <fstream>
+#include <stdio.h>
+#include <string>
 #include "population.hpp"
 
 void print_out(const Parameters& param,
@@ -28,7 +30,8 @@ void print_out(const Parameters& param,
   outfile << population.mutater_sd << "\t";
   outfile << population.mutation_rate_ave << "\t";
   outfile << population.mutation_rate_sd << "\t";
-  outfile << population.rare_non_syn_correlation << "\n";
+  outfile << population.rare_non_syn_correlation << "\t";
+  outfile << population.rare_num_reg << "\n";
   outfile.flush();
 }
 
@@ -47,7 +50,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
         population.next_generation(nums, param);
     }
 
-    if(t<200){
+    if(t<500){
       tsg_non.push_back(population.rare_tsg_non_freq);
       tsg_syn.push_back(population.rare_tsg_syn_freq);
     }else{
@@ -66,7 +69,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
   if(over_mutation){
     return(!over_mutation); // return false
   }else{
-    std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor,mut,mut_sd,mutr,mutr_sd;
+    std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor,mut,mut_sd,mutr,mutr_sd,rare_num_reg;
     std::vector<double> tn_0r,tn_1r,tn_2r,tn_0nr,tn_1nr,tn_2nr,ts_0r,ts_1r,ts_2r,ts_0nr,ts_1nr,ts_2nr;
     for(int time=0; time <= 90; time++){
       if(time %10 ==0){
@@ -77,6 +80,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
         ts_num.push_back(population.rare_tsg_syn_freq);
         ts_sd.push_back(population.rare_tsg_syn_sd);
         cor.push_back(population.rare_non_syn_correlation);
+        rare_num_reg.push_back(population.rare_num_reg);
         mut.push_back(population.mutater_freq);
         mut_sd.push_back(population.mutater_sd);
         mutr.push_back(population.mutation_rate_ave);
@@ -113,6 +117,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     population.rare_tsg_syn_freq = (double)std::accumulate(ts_num.begin(),ts_num.end(),0.0) /ts_num.size();
     population.rare_tsg_syn_sd = (double)std::accumulate(ts_sd.begin(),ts_sd.end(),0.0) /ts_sd.size();
     population.rare_non_syn_correlation = (double)std::accumulate(cor.begin(),cor.end(),0.0) /cor.size();
+    population.rare_num_reg =(double)std::accumulate(rare_num_reg.begin(),rare_num_reg.end(),0.0) /rare_num_reg.size();
     population.mutater_freq = (double)std::accumulate(mut.begin(),mut.end(),0.0) /mut.size();
     population.mutater_sd = (double)std::accumulate(mut_sd.begin(),mut_sd.end(),0.0) /mut_sd.size();
     population.mutation_rate_ave = (double)std::accumulate(mutr.begin(),mutr.end(),0.0) /mutr.size();
@@ -133,10 +138,10 @@ bool one_replicate(Constant& nums, const Parameters& param,
     return(!over_mutation); // return true
   }
 }
-int main()
+int main(int argc,char *argv[])
 {
   std::ofstream outfile;
-  outfile.open("simulation_result.tsv", std::ios::out);
+  outfile.open("simulation_result"+std::string(argv[1])+".tsv", std::ios::out);
   outfile << "generation\tmutation_rate\tmutater_effect\t";
   outfile << "mutater_mutation_rate\tmutater_damage\ttsg_non_damage_e\t";
   outfile << "tsg_non_num\ttsg_non_sd\t";
@@ -146,10 +151,10 @@ int main()
   outfile << "mut0_rare_syn_num\tmut1_rare_syn_num\tmut2_rare_syn_num\t";
   outfile << "mut0_notrare_syn_num\tmut1_notrare_syn_num\tmut2_notrare_syn_num\t";
   outfile << "mutater_freq\tmutater_sd\tmutation_rate_freq\tmutation_rate_sd\t";
-  outfile << "correlation\n";
+  outfile << "correlation\treg_R\n";
   Constant nums;
   int time=1;
-  while(time <=2000){
+  while(time <=20000){
     Parameters param(nums);
     while(param.expected_mutation_sd<0.0000012){param.reset(nums);}
     param.set_damage(nums);

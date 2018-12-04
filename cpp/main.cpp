@@ -24,7 +24,6 @@ void print_out(Constant& nums, const Parameters& param,
 
 bool one_replicate(Constant& nums, const Parameters& param,
                    Population& population, std::ofstream& outfile){
-  population.set_params(nums,param);
   bool tn_equiv=true, ts_equiv=true, cn_equiv=true;
   std::vector<double> tsg_non;
   std::vector<double> tsg_syn;
@@ -115,7 +114,7 @@ int main()
   int time=0;
   while(time <4000){
     Parameters param(nums);
-    Population population(nums);
+    Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
     if(replicate_result){
       std::cout << "done" << time+1 << "time\n";
