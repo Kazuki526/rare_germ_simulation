@@ -63,7 +63,7 @@ double log_random(double start, double end, std::mt19937& mt){
   std::uniform_real_distribution<> dist(start, end);
   return std::pow(10, dist(mt));
 }
-bool equiv_lm(const std::vector<double>& mutation) {
+bool equib_lm(const std::vector<double>& mutation) {
   bool focal=true;
   std::size_t vect_size = mutation.size();
   double xy=0.0, xx=0.0, yy=0.0, average=0.0;

@@ -29,7 +29,7 @@ public:
   const std::vector<std::size_t>& get_tsg_syn_hom(){return tsg_syn_hom;}
   double get_mut_r(){return mut_r;}
   double get_fitness(){return fitness;}
-  void set_param(const Constant& nums, const Parameters& param);
+  void set_param(Constant& nums, const Parameters& param);
   /* gamate */
   std::size_t gamate_mutater(Constant& nums, const Parameters& param);
   std::vector<std::size_t> gamate_tsg_non(Constant& nums, const Parameters& param);

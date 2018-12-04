@@ -1,6 +1,6 @@
 #include "population.hpp"
 
-Population::Population(const Constant& nums, const Parameters& param){
+Population::Population(Constant& nums, const Parameters& param){
   individuals.reserve(nums.N);
   for(std::size_t i=0; i < nums.N; i++){
     Individual ind;

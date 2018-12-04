@@ -52,6 +52,6 @@ private:
 };
 
 double log_random(double start, double end, std::mt19937& mt);
-bool equiv_lm(const std::vector<double>& mutation);
+bool equib_lm(const std::vector<double>& mutation);
 
 #endif

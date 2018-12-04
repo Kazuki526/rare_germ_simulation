@@ -58,8 +58,8 @@ bool one_replicate(Constant& nums, const Parameters& param,
       tsg_non.erase(tsg_non.begin());
       tsg_syn.push_back(population.rare_tsg_syn_freq);
       tsg_syn.erase(tsg_syn.begin());
-      tn_equiv = equiv_lm(tsg_non);
-      ts_equiv = equiv_lm(tsg_syn);
+      tn_equiv = equib_lm(tsg_non);
+      ts_equiv = equib_lm(tsg_syn);
     }
     if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){

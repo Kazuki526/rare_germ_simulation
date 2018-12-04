@@ -51,9 +51,7 @@ Individual::Individual(const std::size_t& m,
   }
 }
 
-void Individual::set_param(const Constant& nums, const Parameters& param){
-  mut_r = param.mutation_rate;
-  for(int i=1; i <= mutater; i++){mut_r*=param.mutater_effect;}
+void Individual::set_param(Constant& nums, const Parameters& param){
   /* set fitness */
   fitness=1;
   for(int i=1; i <= mutater; i++){fitness*=(1-param.mutater_damage);}
@@ -61,6 +59,16 @@ void Individual::set_param(const Constant& nums, const Parameters& param){
   //for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
   for(std::size_t m=0; m < tsg_non_het.size();m++){fitness*=(1-param.tsg_non_damage_e);}
   for(std::size_t m=0; m < tsg_non_hom.size();m++){fitness*=((1-param.tsg_non_damage_e)*(1-param.tsg_non_damage_e));}
+  /* add mutater mutation */
+  std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
+  std::size_t new_mutater = p_mutater(nums.mt) + p_mutater(nums.mt);
+  if(new_mutater==1 & mutater==1){
+    mutater = nums.bern(nums.mt) ? 2: 0;
+  }else{mutater+=new_mutater;}
+  while(mutater>2){mutater-=2;}
+  /* mutation rate */
+  mut_r = param.mutation_rate;
+  for(int i=1; i <= mutater; i++){mut_r*=param.mutater_effect;}
 }
 
 /* gamate methods */
@@ -70,11 +78,6 @@ std::size_t Individual::gamate_mutater(Constant& nums, const Parameters& param){
     new_mutater=1;
   }else if(mutater==1){
     if(nums.bern(nums.mt)){new_mutater=1;}
-  }
-  /* add mutation */
-  std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
-  if(p_mutater(nums.mt)){
-    if(new_mutater==1){new_mutater=0;}else{new_mutater=1;}
   }
   return new_mutater;
 }
