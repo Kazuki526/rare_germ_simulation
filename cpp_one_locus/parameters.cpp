@@ -36,23 +36,23 @@ void Parameters::set_damage(Constant& nums){
 }
 
 double Parameters::get_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0.00000002,0.00000004);
+  std::uniform_real_distribution<> dist(0.000000005,0.00000003);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){
-  std::uniform_real_distribution<> dist(60.0, 100.0);
+  std::uniform_real_distribution<> dist(50.0, 100.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0.00015, 0.00035);
+  std::uniform_real_distribution<> dist(0.00001, 0.0004);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_damage(Constant& nums){
-  std::uniform_real_distribution<> dist(0.006, 0.01);
+  std::uniform_real_distribution<> dist(0.0001, 0.015);
   return dist(nums.mt);
 }
 double Parameters::get_tsg_non_damage_e(Constant& nums){
-  std::uniform_real_distribution<> dist(0.015, 0.035);
+  std::uniform_real_distribution<> dist(0.015, 0.03);
   return dist(nums.mt);
 }
 

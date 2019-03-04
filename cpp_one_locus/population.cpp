@@ -44,6 +44,12 @@ Individual Population::reproduct(Constant& nums, const Parameters& param, std::s
 /* get all mutation AC */
 void Population::mutation_count(const Constant& nums, const Parameters& param){
   const double rare =nums.N*2.0*0.05*0.01;
+/* mutater */
+  std::vector<std::size_t> mutater_num; mutater_num.reserve(nums.N);
+  for(Individual &ind: individuals){
+    mutater_num.push_back(ind.get_mutater());
+  }
+  mutater_freq = (double)std::accumulate(mutater_num.begin(),mutater_num.end(),0)/nums.N;
 /* tsg nonsynonymous */
   num_tsg_non_mutation.clear();
   num_tsg_non_mutation.resize(nums.tsg_non_site);
@@ -128,52 +134,26 @@ void Population::correlation_ns(){
   double nonav,synav;
   nonav = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/N;
   synav = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/N;
-  mutater_freq = (double)std::accumulate(mutater_num.begin(),mutater_num.end(),0)/N;
+  // mutater_freq = (double)std::accumulate(mutater_num.begin(),mutater_num.end(),0)/N;
   mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/N;
   double nonv=0.0, synv=0.0, nonsynv=0.0, mutv=0.0, mutrv=0.0;
-  double xy=0.0, xx=0.0;
-  double mut0=0.0, mut1=0.0, mut2=0.0;
-  mut0_rare_non_num=0.0; mut1_rare_non_num=0.0; mut2_rare_non_num=0.0;
-  mut0_notrare_non_num=0.0; mut1_notrare_non_num=0.0; mut2_notrare_non_num=0.0;
-  mut0_rare_syn_num=0.0; mut1_rare_syn_num=0.0; mut2_rare_syn_num=0.0;
-  mut0_notrare_syn_num=0.0; mut1_notrare_syn_num=0.0; mut2_notrare_syn_num=0.0;
+  double xy=0.0, xx=0.0, xx_=0.0, xy_=0.0;
   for(std::size_t i=0; i < N; i++){
     nonv+=(double)((non_rare_num[i]-nonav)*(non_rare_num[i]-nonav));
     synv+=(double)((syn_rare_num[i]-synav)*(syn_rare_num[i]-synav));
     nonsynv+=(double)((non_rare_num[i]-nonav)*(syn_rare_num[i]-synav));
     mutv+=(double)((mutater_num[i]-mutater_freq)*(mutater_num[i]-mutater_freq));
     mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
-    xx+=non_rare_num[i]*non_rare_num[i];
-    xy+=non_rare_num[i]*syn_rare_num[i];
-
-    if(mutater_num[i]==0){mut0++;
-      mut0_rare_non_num+=non_rare_num[i];mut0_notrare_non_num+=non_notrare_num[i];
-      mut0_rare_syn_num+=syn_rare_num[i];mut0_notrare_syn_num+=syn_notrare_num[i];
-    }else if(mutater_num[i]==1){mut1++;
-      mut1_rare_non_num+=non_rare_num[i];mut1_notrare_non_num+=non_notrare_num[i];
-      mut1_rare_syn_num+=syn_rare_num[i];mut1_notrare_syn_num+=syn_notrare_num[i];
-    }else{mut2++;
-      mut2_rare_non_num+=non_rare_num[i];mut2_notrare_non_num+=non_notrare_num[i];
-      mut2_rare_syn_num+=syn_rare_num[i];mut2_notrare_syn_num+=syn_notrare_num[i];
-    }
+    xx+=(non_rare_num[i]-nonav)*(non_rare_num[i]-nonav);
+    xy+=(non_rare_num[i]-nonav)*(syn_rare_num[i]-synav);
+    xx_+=non_rare_num[i]*non_rare_num[i];
+    xy_+=non_rare_num[i]*syn_rare_num[i];
   }
-  if(mut2==0){mut2=1;}
-  mut0_rare_non_num/=mut0;
-  mut1_rare_non_num/=mut1;
-  mut2_rare_non_num/=mut2;
-  mut0_notrare_non_num/=mut0;
-  mut1_notrare_non_num/=mut1;
-  mut2_notrare_non_num/=mut2;
-  mut0_rare_syn_num/=mut0;
-  mut1_rare_syn_num/=mut1;
-  mut2_rare_syn_num/=mut2;
-  mut0_notrare_syn_num/=mut0;
-  mut1_notrare_syn_num/=mut1;
-  mut2_notrare_syn_num/=mut2;
   rare_tsg_non_sd = std::sqrt((double)nonv/N);
   rare_tsg_syn_sd = std::sqrt((double)synv/N);
   rare_non_syn_correlation = (double)(nonsynv/N)/(rare_tsg_non_sd*rare_tsg_syn_sd);
   rare_num_reg = (double) xy/xx;
+  rare_num_reg_zero = (double) xy_/xx_;
   mutater_sd = std::sqrt((double)mutv/N);
   mutation_rate_sd = std::sqrt((double)mutrv/N);
 }
