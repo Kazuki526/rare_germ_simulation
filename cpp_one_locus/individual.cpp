@@ -91,11 +91,8 @@ std::vector<std::size_t> Individual::gamate_tsg_non(Constant& nums, const Parame
   std::poisson_distribution<> pois_tn(nums.tsg_non_site*mut_r);
   std::uniform_int_distribution<> tn_mut(0, nums.tsg_non_site -1);
   int tn_num=pois_tn(nums.mt);
-  if(tn_num > 0){
-    while(tn_num > 0){
-      tn_num--;
+  for(std::size_t n=1; n <=tn_num; n++){
       new_tsg_non.push_back(tn_mut(nums.mt));
-    }
   }
   return new_tsg_non;
 }
@@ -109,11 +106,8 @@ std::vector<std::size_t> Individual::gamate_tsg_syn(Constant& nums, const Parame
   std::poisson_distribution<> pois_ts(nums.tsg_syn_site*mut_r);
   std::uniform_int_distribution<> ts_mut(0, nums.tsg_syn_site -1);
   int ts_num=pois_ts(nums.mt);
-  if(ts_num > 0){
-    while(ts_num > 0){
-      ts_num--;
+  for(std::size_t n=1; n <= ts_num; n++){
       new_tsg_syn.push_back(ts_mut(nums.mt));
-    }
   }
   return new_tsg_syn;
 }

@@ -58,7 +58,8 @@ bool one_replicate(Constant& nums, const Parameters& param,
     if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){
          over_mutation=true;break;
-       }
+    }
+    //std::cout <<t<<" "<<population.rare_tsg_syn_freq<<" "<<population.mutater_freq<<"\n";std::cout.flush();
   }
   if(over_mutation){
     return(!over_mutation); // return false
@@ -114,7 +115,7 @@ int main(int argc,char *argv[])
   outfile << "correlation\treg_R\treg_R_zero\n";
   Constant nums;
   int time=1;
-  while(time <=2000){
+  while(time <=20000){
     Parameters param(nums);
     int t=0;
     while(param.expected_mutation_sd<0.000002){param.reset(nums);t++;}
