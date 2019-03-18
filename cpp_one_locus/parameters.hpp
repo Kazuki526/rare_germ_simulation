@@ -10,7 +10,7 @@
 #include <cmath>
 
 struct Constant{
-  const std::size_t N = 50000;
+  const std::size_t N = 56418;
   const std::size_t patient_n =6418;
   const std::size_t tsg_non_site = 191624;
   const std::size_t tsg_syn_site = 61470;

@@ -68,7 +68,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     std::vector<double> tn_0r,tn_1r,tn_2r,tn_0nr,tn_1nr,tn_2nr,ts_0r,ts_1r,ts_2r,ts_0nr,ts_1nr,ts_2nr;
     for(int time=0; time <= 500; time++){
       if(time %10 ==0){
-        population.correlation_ns();
+        population.correlation_ns(nums);
         //print_out(nums,param,population,outfile);
         tn_num.push_back(population.rare_tsg_non_freq);
         tn_sd.push_back(population.rare_tsg_non_sd);
@@ -124,7 +124,7 @@ int main(int argc,char *argv[])
     Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
     if(replicate_result){
-      std::cout << "done" << time << "time\n";
+      std::cout << "done" << time << "time\n";std::cout.flush();
       time++;
     }else{std::cout<<"restart: "<<std::flush;}
   }

@@ -33,7 +33,7 @@ public:
   Population(Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);
   void next_generation(Constant& nums, const Parameters& param, bool common_variant=false);
-  void correlation_ns();
+  void correlation_ns(Constant& nums);
 };
 
 
