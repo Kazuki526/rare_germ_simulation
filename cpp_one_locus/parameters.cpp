@@ -16,8 +16,11 @@ Parameters::Parameters(Constant& nums){
              (e*e*mutation_rate-mutr)*(e*e*mutation_rate-mutr)*p*p,0.5);
 }
 void Parameters::reset(Constant& nums){
+  mutation_rate = get_mutation_rate(nums);
   mutater_effect = get_mutater_effect(nums);
   mutater_mutation_rate = get_mutater_mutation_rate(nums);
+  mutater_damage = get_mutater_damage(nums);
+  tsg_non_damage_e = get_tsg_non_damage_e(nums);
 
   double m=mutater_mutation_rate, s=mutater_damage, e=mutater_effect;
   double p = m/s+0.5-m/2-std::pow((m/s+(1-m)/2)*(m/s+(1-m)/2)-m/s,0.5);

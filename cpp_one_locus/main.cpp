@@ -115,11 +115,11 @@ int main(int argc,char *argv[])
   outfile << "correlation\treg_R\treg_R_zero\n";
   Constant nums;
   int time=1;
-  while(time <=20000){
+  while(time <=100){
     Parameters param(nums);
-    int t=0;
-    while(param.expected_mutation_sd<0.000002){param.reset(nums);t++;}
-    std::cout << t << " time reparam\t";
+    //int t=0;
+    //while(param.expected_mutation_sd<0.0000005){param.reset(nums);t++;}
+    //std::cout << t << " time reparam\t";
     param.set_damage(nums);
     Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
