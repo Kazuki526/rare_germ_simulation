@@ -23,18 +23,21 @@ void Population::set_common_variant(const Constant& nums){
 Individual Population::reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2, bool common_check){
   std::vector<std::size_t> m1 = individuals[i1].gamate_mutater(nums,param);
   std::vector<std::size_t> m2 =  individuals[i2].gamate_mutater(nums,param);
-  std::vector<std::size_t> mutater(param.mutater_locus);
+  std::vector<std::size_t> mutater(param.mutater_locus,0);
   for(std::size_t i=0; i < param.mutater_locus; i++){
     mutater[i] = m1[i] + m2[i];
   }
+  //std::cout <<"m";std::cout.flush();
 /* tsg nonsynonymous */
   std::vector<std::size_t> tsg_non=individuals[i1].gamate_tsg_non(nums,param);
   std::vector<std::size_t> tn2=individuals[i2].gamate_tsg_non(nums,param);
   tsg_non.insert(tsg_non.end(), tn2.begin(), tn2.end());
+  //std::cout <<"n";std::cout.flush();
 /* tsg synonymous */
   std::vector<std::size_t> tsg_syn=individuals[i1].gamate_tsg_syn(nums,param);
   std::vector<std::size_t> ts2=individuals[i2].gamate_tsg_syn(nums,param);
   tsg_syn.insert(tsg_syn.end(), ts2.begin(), ts2.end());
+  //std::cout <<"s";std::cout.flush();
   if(common_check){
     Individual ind(mutater, tsg_non, tsg_syn, tsg_non_common, tsg_syn_common);
     ind.set_param(nums, param);
@@ -103,7 +106,9 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
   next_inds.reserve(nums.N);
   std::discrete_distribution<std::size_t> dist(fitness.begin(), fitness.end());
   for(std::size_t i=0; i < nums.N; i++){
-     next_inds.push_back(reproduct(nums, param, dist(nums.mt), dist(nums.mt), common_check));
+    Individual ind = reproduct(nums, param, dist(nums.mt), dist(nums.mt), common_check);
+    if(ind.mutater_mut_r >= 1){stop_or_not=true;break;}
+    next_inds.push_back(ind);
   }
   individuals = next_inds;
   /* mutation_count */
@@ -115,6 +120,7 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
 }
 
 void Population::correlation_ns(){
+  std::cout <<individuals.size() <<" "<<std::flush;
   const int N =individuals.size();
   const int rare = N/1000;
   std::vector<int> non_rare_num(N,0), syn_rare_num(N,0),non_notrare_num(N,0), syn_notrare_num(N,0);

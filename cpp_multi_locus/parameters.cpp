@@ -40,7 +40,7 @@ double Parameters::get_mutation_rate(Constant& nums){
   return dist(nums.mt);
 }
 double Parameters::get_mutater_effect(Constant& nums){
-  std::uniform_real_distribution<> dist(2.0, 50.0);
+  std::uniform_real_distribution<> dist(1.2, 50.0);
   return dist(nums.mt);
 }
 double Parameters::get_mutater_mutation_rate(Constant& nums){

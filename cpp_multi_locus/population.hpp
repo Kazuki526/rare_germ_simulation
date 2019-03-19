@@ -29,6 +29,7 @@ public:
   double rare_non_syn_correlation;
   double rare_num_reg_zero;
   double rare_num_reg;
+  bool stop_or_not = false;
 
   Population(Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);

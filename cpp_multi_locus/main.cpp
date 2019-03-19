@@ -40,6 +40,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     }else{
         population.next_generation(nums, param);
     }
+    if(population.stop_or_not == true){over_mutation=true;break;}
 
     if(t<200){
       mutater.push_back(population.mutater_freq);
@@ -59,7 +60,8 @@ bool one_replicate(Constant& nums, const Parameters& param,
     if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){
          over_mutation=true;break;
-       }
+    }
+    //std::cout <<t<<" "<<population.rare_tsg_syn_freq<<" "<<population.mutater_freq<<"\n";std::cout.flush();
   }
   if(over_mutation){
     return(!over_mutation); // return false
@@ -67,6 +69,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
     std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor,mut,mut_sd,mutr,mutr_sd,rare_num_reg, rare_num_reg_zero;
     std::vector<double> tn_0r,tn_1r,tn_2r,tn_0nr,tn_1nr,tn_2nr,ts_0r,ts_1r,ts_2r,ts_0nr,ts_1nr,ts_2nr;
     for(int time=0; time <= 500; time++){
+      if(population.stop_or_not == true){over_mutation=true;break;}
       if(time %10 ==0){
         population.correlation_ns();
         //print_out(nums,param,population,outfile);
@@ -86,6 +89,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
         population.next_generation(nums,param);
       }
     }
+  if(over_mutation){return(!over_mutation);} // return false
     outfile << t <<"\t";
     if(tn_2r.empty()){tn_2r.push_back(0);tn_2nr.push_back(0);ts_2r.push_back(0);ts_2nr.push_back(0);}
     population.rare_tsg_non_freq = (double)std::accumulate(tn_num.begin(),tn_num.end(),0.0) /tn_num.size();
@@ -121,10 +125,16 @@ int main(int argc,char *argv[])
     //while(param.expected_mutation_sd<0.000002){param.reset(nums);t++;}
     //std::cout << t << " time reparam\t";
     //param.set_damage(nums);
+    std::cout << param.mutater_locus <<"\t";
+    std::cout << param.mutation_rate <<"\t";
+    std::cout << param.mutater_effect <<"\t";
+    std::cout << param.mutater_mutation_rate <<"\t";
+    std::cout << param.mutater_damage <<"\t";
+    std::cout << param.tsg_non_damage_e <<"\n";
     Population population(nums,param);
     bool replicate_result = one_replicate(nums, param, population, outfile);
     if(replicate_result){
-      std::cout << "done" << time << "time\n";
+      std::cout << "done" << time << "time\n";std::cout.flush();
       time++;
     }else{std::cout<<"restart: "<<std::flush;}
   }

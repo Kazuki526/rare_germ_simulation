@@ -31,7 +31,7 @@ struct Constant{
 
 struct Parameters
 {
-  int mutater_locus = 10;
+  std::size_t mutater_locus = 10;
   double mutation_rate;
   double mutater_effect;
   double mutater_mutation_rate;
