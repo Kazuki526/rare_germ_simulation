@@ -116,11 +116,13 @@ void Population::correlation_ns(Constant& nums){
 /* select cancer patient */
   std::unordered_set<std::size_t> patients;
   std::uniform_int_distribution<> sample_patient(0, N-1);
-  for(std::size_t i = 0; i < patient_n; i++){
+  patients.insert(sample_patient(nums.mt));
+  for(std::size_t i = 1; i < patient_n; i++){
     std::size_t now_i =sample_patient(nums.mt);
     while(patients.find(now_i) != patients.end()){
       now_i = sample_patient(nums.mt);
     }
+    patients.insert(now_i);
   }
 
 /* count mutation */
@@ -143,41 +145,41 @@ void Population::correlation_ns(Constant& nums){
     }
   }
 /* count patient rare num */
-  std::vector<int> non_rare_num(patient_n,0), syn_rare_num(patient_n,0),non_notrare_num(patient_n,0), syn_notrare_num(patient_n,0);
+  std::vector<int> non_rare_num(patient_n,0), syn_rare_num(patient_n,0);
   std::vector<std::size_t> mutater_num; mutater_num.reserve(patient_n);
   std::vector<double> mutation_rate; mutation_rate.reserve(patient_n);
-  for(std::size_t i=0; i < N;i++){
-    if(patients.find(i) == patients.end()){continue;}
-    for(std::size_t tn_het: individuals[i].get_tsg_non_het()){
-      if(tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}else{non_notrare_num[i]++;}
+  std::vector<std::size_t> patients_list(patients.begin(),patients.end());
+  for(std::size_t i=0; i <patient_n; i++){
+    Individual &ind = individuals[patients_list[i]];
+    for(std::size_t tn_het: ind.get_tsg_non_het()){
+      if(tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}
     }
-    for(std::size_t tn_hom: individuals[i].get_tsg_non_hom()){
-      if(tsg_non_mutation[tn_hom] < rare){non_rare_num[i]+=2;}else{non_notrare_num[i]+=2;}
+    for(std::size_t tn_hom: ind.get_tsg_non_hom()){
+      if(tsg_non_mutation[tn_hom] < rare){non_rare_num[i]+=2;}
     }
-    for(std::size_t ts_het: individuals[i].get_tsg_syn_het()){
-      if(tsg_syn_mutation[ts_het] < rare){syn_rare_num[i]++;}else{syn_notrare_num[i]++;}
+    for(std::size_t ts_het: ind.get_tsg_syn_het()){
+      if(tsg_syn_mutation[ts_het] < rare){syn_rare_num[i]++;}
     }
-    for(std::size_t ts_hom: individuals[i].get_tsg_syn_hom()){
-      if(tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}else{syn_notrare_num[i]+=2;}
+    for(std::size_t ts_hom: ind.get_tsg_syn_hom()){
+      if(tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}
     }
-    mutater_num.push_back(individuals[i].get_mutater());
-    mutation_rate.push_back(individuals[i].get_mut_r());
+    mutater_num.push_back(ind.get_mutater());
+    mutation_rate.push_back(ind.get_mut_r());
   }
-  double nonav,synav;
-  nonav = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/patient_n;
-  synav = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/patient_n;
+  rare_tsg_non_freq = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/patient_n;
+  rare_tsg_syn_freq = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/patient_n;
   mutater_freq = (double)std::accumulate(mutater_num.begin(),mutater_num.end(),0)/patient_n;
   mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/patient_n;
   double nonv=0.0, synv=0.0, nonsynv=0.0, mutv=0.0, mutrv=0.0;
   double xy=0.0, xx=0.0, xx_=0.0, xy_=0.0;
   for(std::size_t i=0; i < patient_n; i++){
-    nonv+=(double)((non_rare_num[i]-nonav)*(non_rare_num[i]-nonav));
-    synv+=(double)((syn_rare_num[i]-synav)*(syn_rare_num[i]-synav));
-    nonsynv+=(double)((non_rare_num[i]-nonav)*(syn_rare_num[i]-synav));
+    nonv+=(double)((non_rare_num[i]-rare_tsg_non_freq)*(non_rare_num[i]-rare_tsg_non_freq));
+    synv+=(double)((syn_rare_num[i]-rare_tsg_syn_freq)*(syn_rare_num[i]-rare_tsg_syn_freq));
+    nonsynv+=(double)((non_rare_num[i]-rare_tsg_non_freq)*(syn_rare_num[i]-rare_tsg_syn_freq));
     mutv+=(double)((mutater_num[i]-mutater_freq)*(mutater_num[i]-mutater_freq));
     mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
-    xx+=(non_rare_num[i]-nonav)*(non_rare_num[i]-nonav);
-    xy+=(non_rare_num[i]-nonav)*(syn_rare_num[i]-synav);
+    xx+=(non_rare_num[i]-rare_tsg_non_freq)*(non_rare_num[i]-rare_tsg_non_freq);
+    xy+=(non_rare_num[i]-rare_tsg_non_freq)*(syn_rare_num[i]-rare_tsg_syn_freq);
     xx_+=non_rare_num[i]*non_rare_num[i];
     xy_+=non_rare_num[i]*syn_rare_num[i];
   }
