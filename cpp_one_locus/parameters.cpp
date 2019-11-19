@@ -66,6 +66,7 @@ double log_random(double start, double end, std::mt19937& mt){
   std::uniform_real_distribution<> dist(start, end);
   return std::pow(10, dist(mt));
 }
+
 bool equib_lm(const std::vector<double>& mutation) {
   bool focal=true;
   std::size_t vect_size = mutation.size();
@@ -78,7 +79,7 @@ bool equib_lm(const std::vector<double>& mutation) {
     //yy += (average-mutation[t])*(average-mutation[t]);
     xy += (x_ave-t)*(average-mutation[t]);
   }
-  if((double)average/10000.0 > std::fabs(xy/xx)){focal=false;}
+  if(std::fabs(xy/xx) < 0.0){focal=false;}
   //if(std::fabs(xy/(std::pow(xx,0.5)*std::pow(yy,0.5))) < 0.1){focal=false;}
   return focal;
 }
