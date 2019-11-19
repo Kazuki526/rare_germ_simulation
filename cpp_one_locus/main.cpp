@@ -24,7 +24,7 @@ void print_out(const Parameters& param,
   outfile.flush();
 }
 
-bool one_replicate(Constant& nums, const Parameters& param,
+void one_replicate(Constant& nums, const Parameters& param,
                    Population& population, std::ofstream& outfile){
   bool mut_equiv=true, tn_equiv=true, ts_equiv=true;
   std::vector<double> mutater;
@@ -52,7 +52,7 @@ bool one_replicate(Constant& nums, const Parameters& param,
       tsg_syn.erase(tsg_syn.begin());
       if(mut_equiv){mut_equiv = equib_lm(mutater);}
       if(tn_equiv) {tn_equiv = equib_lm(tsg_non);}
-      if(ts_eauiv) {ts_equiv = equib_lm(tsg_syn);}
+      if(ts_equiv) {ts_equiv = equib_lm(tsg_syn);}
     }
     if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){break;}
