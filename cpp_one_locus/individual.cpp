@@ -76,6 +76,7 @@ std::size_t Individual::gamate_mutater(Constant& nums, const Parameters& param){
  std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
  if(p_mutater(nums.mt)){
    if(new_mutater==1){new_mutater=0;}else{new_mutater=1;}
+   //new_mutater=1; //if one multi locus model
  }
   return new_mutater;
 }

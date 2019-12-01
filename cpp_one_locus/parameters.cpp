@@ -79,7 +79,7 @@ bool equib_lm(const std::vector<double>& mutation) {
     //yy += (average-mutation[t])*(average-mutation[t]);
     xy += (x_ave-t)*(average-mutation[t]);
   }
-  if(std::fabs(xy/xx) < 0.0){focal=false;}
+  if(xy/xx < 0.0){focal=false;}
   //if(std::fabs(xy/(std::pow(xx,0.5)*std::pow(yy,0.5))) < 0.1){focal=false;}
   return focal;
 }

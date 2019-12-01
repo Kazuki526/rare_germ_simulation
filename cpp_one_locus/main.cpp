@@ -39,7 +39,7 @@ void one_replicate(Constant& nums, const Parameters& param,
         population.next_generation(nums, param);
     }
 
-    if(t<1000){
+    if(t<=1000){
       mutater.push_back(population.mutater_freq);
       tsg_non.push_back(population.rare_tsg_non_freq);
       tsg_syn.push_back(population.rare_tsg_syn_freq);
@@ -57,7 +57,9 @@ void one_replicate(Constant& nums, const Parameters& param,
     if((population.rare_tsg_non_freq > nums.rare_tsg_non_num*2)||
        (population.rare_tsg_syn_freq > nums.rare_tsg_syn_num*2)){break;}
     //std::cout <<t<<" "<<population.rare_tsg_syn_freq<<" "<<population.mutater_freq<<"\n";std::cout.flush();
+    //if(t % 100 == 0){std::cout << "now " << t << " generation " << mut_equiv << tn_equiv << ts_equiv << "\n";std::cout.flush();}
   }
+  //std::cout << t << " generation => finish and go sumary\n";std::cout.flush();
   std::vector<double> tn_num,tn_sd,ts_num,ts_sd,cor,mut,mut_sd,mutr,mutr_sd,rare_num_reg, rare_num_reg_zero;
   std::vector<double> tn_0r,tn_1r,tn_2r,tn_0nr,tn_1nr,tn_2nr,ts_0r,ts_1r,ts_2r,ts_0nr,ts_1nr,ts_2nr;
   for(int time=0; time <= 500; time++){
@@ -115,7 +117,7 @@ int main(int argc,char *argv[])
     param.set_damage(nums);
     Population population(nums,param);
     one_replicate(nums, param, population, outfile);
-    std::cout << "done" << time << "time\n";std::cout.flush();
+    std::cout << "done " << time << " time\n";std::cout.flush();
     time++;
   }
 
