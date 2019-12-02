@@ -1,6 +1,6 @@
 #include"individual.hpp"
 
-Individual::Individual(const std::size_t& m,
+Individual::Individual(const std::vector<int>& m,
            const std::vector<std::size_t>& tsg_non,
            const std::vector<std::size_t>& tsg_syn,
            const std::unordered_set<std::size_t>& tsg_non_common,
