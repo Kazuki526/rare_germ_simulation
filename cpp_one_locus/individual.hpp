@@ -7,7 +7,8 @@
 class Individual
 {
 private:
-  std::size_t mutater;
+  std::size_t mutater_num;
+  std::vector<int> mutater;
   std::vector<std::size_t> tsg_non_het;
   std::vector<std::size_t> tsg_non_hom;
   std::vector<std::size_t> tsg_syn_het;
@@ -16,7 +17,7 @@ private:
   double fitness;
 public:
   double mut_r;
-  Individual(): mutater(0){};
+  Individual(){};
   Individual(const std::size_t& m,
              const std::vector<std::size_t>& tsg_non,
              const std::vector<std::size_t>& tsg_syn,

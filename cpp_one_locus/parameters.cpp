@@ -31,6 +31,7 @@ void Parameters::reset(Constant& nums){
              (e*e*mutation_rate-mutr)*(e*e*mutation_rate-mutr)*p*p,0.5);
 }
 
+/* set each TSG site damage */
 void Parameters::set_damage(Constant& nums){
   std::exponential_distribution<> tsg_ex(1.0/tsg_non_damage_e);
   for(std::size_t s=0; s < nums.tsg_non_site; s++){
@@ -38,6 +39,7 @@ void Parameters::set_damage(Constant& nums){
   }
 }
 
+/*set each parameters */
 double Parameters::get_mutation_rate(Constant& nums){
   std::uniform_real_distribution<> dist(0.000000005,0.00000003);
   return dist(nums.mt);

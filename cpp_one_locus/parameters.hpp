@@ -41,8 +41,10 @@ struct Parameters
   Parameters(Constant& nums);
   void reset(Constant& nums);
   void set_damage(Constant& nums);
+  int get_new_mutater(){new_mutater_id++;return(new_mutater_id);};
 
-private:
+private:]
+  int new_mutater_id = 0;
   double get_mutation_rate(Constant& nums);
   double get_mutater_effect(Constant& nums);
   double get_mutater_mutation_rate(Constant& nums);
