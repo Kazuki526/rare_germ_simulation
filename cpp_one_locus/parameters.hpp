@@ -41,15 +41,15 @@ struct Parameters
   Parameters(Constant& nums);
   void reset(Constant& nums);
   void set_damage(Constant& nums);
-  int get_new_mutater(){new_mutater_id++;return(new_mutater_id);};
+  std::size_t get_new_mutater(){new_mutater_id++; return new_mutater_id;}
 
-private:]
-  int new_mutater_id = 0;
-  double get_mutation_rate(Constant& nums);
-  double get_mutater_effect(Constant& nums);
-  double get_mutater_mutation_rate(Constant& nums);
-  double get_mutater_damage(Constant& nums);
-  double get_tsg_non_damage_e(Constant& nums);
+private:
+  std::size_t new_mutater_id;
+  double set_mutation_rate(Constant& nums);
+  double set_mutater_effect(Constant& nums);
+  double set_mutater_mutation_rate(Constant& nums);
+  double set_mutater_damage(Constant& nums);
+  double set_tsg_non_damage_e(Constant& nums);
   void set_tsg_non_damage(Constant& nums);
 };
 

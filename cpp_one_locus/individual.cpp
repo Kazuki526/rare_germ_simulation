@@ -1,11 +1,12 @@
 #include"individual.hpp"
 
-Individual::Individual(const std::vector<int>& m,
+Individual::Individual(const std::vector<std::size_t>& m,
            const std::vector<std::size_t>& tsg_non,
            const std::vector<std::size_t>& tsg_syn,
            const std::unordered_set<std::size_t>& tsg_non_common,
            const std::unordered_set<std::size_t>& tsg_syn_common){
   mutater=m;
+  mutater_num=m.size();
   bool common_focal =false;
   if(! tsg_non_common.empty() || ! tsg_syn_common.empty()){common_focal=true;}
   if(common_focal){ /* need common variant check */
@@ -54,29 +55,34 @@ Individual::Individual(const std::vector<int>& m,
 void Individual::set_param(Constant& nums, const Parameters& param){
   /* set fitness */
   fitness=1;
-  for(int i=1; i <= mutater; i++){fitness*=(1-param.mutater_damage);}
+  for(std::size_t i=1; i <= mutater_num; i++){fitness*=(1-param.mutater_damage);}
   for(std::size_t mu: tsg_non_het){fitness*=(1-param.tsg_non_damage[mu]);}
   for(std::size_t mu: tsg_non_hom){fitness*=((1-param.tsg_non_damage[mu])*(1-param.tsg_non_damage[mu]));}
   //for(std::size_t m=0; m < tsg_non_het.size();m++){fitness*=(1-param.tsg_non_damage_e);}
   //for(std::size_t m=0; m < tsg_non_hom.size();m++){fitness*=((1-param.tsg_non_damage_e)*(1-param.tsg_non_damage_e));}
   /* mutation rate */
   mut_r = param.mutation_rate;
-  for(int i=1; i <= mutater; i++){mut_r*=param.mutater_effect;}
+  /*#######################################################################*/
+  for(int i=1; i <= mutater_num; i++){mut_r*=param.mutater_effect;}
+  /*#######################################################################*/
 }
 
 /* gamate methods */
-std::size_t Individual::gamate_mutater(Constant& nums, const Parameters& param){
-  std::size_t new_mutater=0;
-  if(mutater ==2){
-    new_mutater=1;
-  }else if(mutater==1){
-    if(nums.bern(nums.mt)){new_mutater=1;}
+std::vector<std::size_t> Individual::gamate_mutater(Constant& nums, Parameters& param){
+  std::vector<std::size_t> new_mutater;
+  if(mutater_num > 1){
+    for(std::size_t mut_allele: mutater){
+
+    }
+  }else{
+    for(std::size_t i=1; i<=mutater_num;i++){
+      if(nums.bern(nums.mt)){new_mutater.push_back(mutater[i]);}
+    }
   }
   /* add mutation */
  std::bernoulli_distribution p_mutater(param.mutater_mutation_rate);
  if(p_mutater(nums.mt)){
-   if(new_mutater==1){new_mutater=0;}else{new_mutater=1;}
-   //new_mutater=1; //if one multi locus model
+   new_mutater.push_back(param.get_new_mutater());
  }
   return new_mutater;
 }

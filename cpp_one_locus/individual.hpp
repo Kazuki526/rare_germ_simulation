@@ -8,22 +8,22 @@ class Individual
 {
 private:
   std::size_t mutater_num;
-  std::vector<int> mutater;
+  std::vector<std::size_t> mutater;
   std::vector<std::size_t> tsg_non_het;
   std::vector<std::size_t> tsg_non_hom;
   std::vector<std::size_t> tsg_syn_het;
   std::vector<std::size_t> tsg_syn_hom;
-
+  double mut_r;
   double fitness;
 public:
-  double mut_r;
-  Individual(){};
-  Individual(const std::size_t& m,
+  Individual(){mutater_num=0;}
+  Individual(const std::vector<std::size_t>& m,
              const std::vector<std::size_t>& tsg_non,
              const std::vector<std::size_t>& tsg_syn,
              const std::unordered_set<std::size_t>& tsg_non_common={},
              const std::unordered_set<std::size_t>& tsg_syn_common={});
-  const std::size_t& get_mutater(){return mutater;}
+  const std::size_t get_mutater_mum(){return mutater_num;}
+  const std::vector<std::size_t>& get_mutater(){return mutater;}
   const std::vector<std::size_t>& get_tsg_non_het(){return tsg_non_het;}
   const std::vector<std::size_t>& get_tsg_non_hom(){return tsg_non_hom;}
   const std::vector<std::size_t>& get_tsg_syn_het(){return tsg_syn_het;}
@@ -32,7 +32,7 @@ public:
   double get_fitness(){return fitness;}
   void set_param(Constant& nums, const Parameters& param);
   /* gamate */
-  std::size_t gamate_mutater(Constant& nums, const Parameters& param);
+  std::vector<std::size_t> gamate_mutater(Constant& nums, Parameters& param);
   std::vector<std::size_t> gamate_tsg_non(Constant& nums, const Parameters& param);
   std::vector<std::size_t> gamate_tsg_syn(Constant& nums, const Parameters& param);
 };
