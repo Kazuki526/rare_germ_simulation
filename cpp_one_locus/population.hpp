@@ -20,8 +20,8 @@ private:
 public:
   double mutation_rate_ave;
   double mutation_rate_sd;
-  double mutater_freq;
-  double mutater_sd;
+  double mutator_freq;
+  //double mutator_sd;
   double rare_tsg_non_freq;
   double rare_tsg_syn_freq;
   double rare_tsg_non_sd;

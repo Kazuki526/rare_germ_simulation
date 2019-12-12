@@ -32,23 +32,24 @@ struct Constant{
 struct Parameters
 {
   double mutation_rate;
-  double mutater_effect;
-  double mutater_mutation_rate;
-  double mutater_damage;
+  double mutator_effect;
+  double mutator_mutation_rate;
+  double mutator_damage;
   double tsg_non_damage_e;
   std::vector<double> tsg_non_damage;
   double expected_mutation_sd;
   Parameters(Constant& nums);
   void reset(Constant& nums);
   void set_damage(Constant& nums);
-  std::size_t get_new_mutater(){new_mutater_id++; return new_mutater_id;}
+  std::size_t get_new_mutator(){new_mutator_id++; return new_mutator_id;}
+  std::size_t get_last_mutator(){return new_mutator_id;}
 
 private:
-  std::size_t new_mutater_id;
+  std::size_t new_mutator_id;
   double set_mutation_rate(Constant& nums);
-  double set_mutater_effect(Constant& nums);
-  double set_mutater_mutation_rate(Constant& nums);
-  double set_mutater_damage(Constant& nums);
+  double set_mutator_effect(Constant& nums);
+  double set_mutator_mutation_rate(Constant& nums);
+  double set_mutator_damage(Constant& nums);
   double set_tsg_non_damage_e(Constant& nums);
   void set_tsg_non_damage(Constant& nums);
 };

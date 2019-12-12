@@ -1,16 +1,16 @@
 #include "parameters.hpp"
 
 Parameters::Parameters(Constant& nums){
-  new_mutater_id=0;
+  new_mutator_id=0;
   mutation_rate = set_mutation_rate(nums);
-  mutater_effect = set_mutater_effect(nums);
-  mutater_mutation_rate = set_mutater_mutation_rate(nums);
-  mutater_damage = set_mutater_damage(nums);
+  mutator_effect = set_mutator_effect(nums);
+  mutator_mutation_rate = set_mutator_mutation_rate(nums);
+  mutator_damage = set_mutator_damage(nums);
   tsg_non_damage_e = set_tsg_non_damage_e(nums);
 
-  double m=mutater_mutation_rate, s=mutater_damage, e=mutater_effect;
+  double m=mutator_mutation_rate, s=mutator_damage, e=mutator_effect;
   double p = m/s+0.5-m/2-std::pow((m/s+(1-m)/2)*(m/s+(1-m)/2)-m/s,0.5);
-  double mutr = ((1-p)*(1-p)+mutater_effect*2*p*(1-p)+e*e*(p*p))*mutation_rate;
+  double mutr = ((1-p)*(1-p)+mutator_effect*2*p*(1-p)+e*e*(p*p))*mutation_rate;
   expected_mutation_sd =
     std::pow((mutation_rate-mutr)*(mutation_rate-mutr)*(1-p)*(1-p)+
              (e*mutation_rate-mutr)*(e*mutation_rate-mutr)*2*p*(1-p)+
@@ -18,14 +18,14 @@ Parameters::Parameters(Constant& nums){
 }
 void Parameters::reset(Constant& nums){
   mutation_rate = set_mutation_rate(nums);
-  mutater_effect = set_mutater_effect(nums);
-  mutater_mutation_rate = set_mutater_mutation_rate(nums);
-  mutater_damage = set_mutater_damage(nums);
+  mutator_effect = set_mutator_effect(nums);
+  mutator_mutation_rate = set_mutator_mutation_rate(nums);
+  mutator_damage = set_mutator_damage(nums);
   tsg_non_damage_e = set_tsg_non_damage_e(nums);
 
-  double m=mutater_mutation_rate, s=mutater_damage, e=mutater_effect;
+  double m=mutator_mutation_rate, s=mutator_damage, e=mutator_effect;
   double p = m/s+0.5-m/2-std::pow((m/s+(1-m)/2)*(m/s+(1-m)/2)-m/s,0.5);
-  double mutr = ((1-p)*(1-p)+mutater_effect*2*p*(1-p)+e*e*(p*p))*mutation_rate;
+  double mutr = ((1-p)*(1-p)+mutator_effect*2*p*(1-p)+e*e*(p*p))*mutation_rate;
   expected_mutation_sd =
     std::pow((mutation_rate-mutr)*(mutation_rate-mutr)*(1-p)*(1-p)+
              (e*mutation_rate-mutr)*(e*mutation_rate-mutr)*2*p*(1-p)+
@@ -45,15 +45,15 @@ double Parameters::set_mutation_rate(Constant& nums){
   std::uniform_real_distribution<> dist(0.000000005,0.00000003);
   return dist(nums.mt);
 }
-double Parameters::set_mutater_effect(Constant& nums){
+double Parameters::set_mutator_effect(Constant& nums){
   std::uniform_real_distribution<> dist(50.0, 100.0);
   return dist(nums.mt);
 }
-double Parameters::set_mutater_mutation_rate(Constant& nums){
+double Parameters::set_mutator_mutation_rate(Constant& nums){
   std::uniform_real_distribution<> dist(0.00001, 0.0004);
   return dist(nums.mt);
 }
-double Parameters::set_mutater_damage(Constant& nums){
+double Parameters::set_mutator_damage(Constant& nums){
   std::uniform_real_distribution<> dist(0.0001, 0.015);
   return dist(nums.mt);
 }
