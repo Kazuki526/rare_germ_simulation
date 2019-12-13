@@ -1,7 +1,6 @@
 #include "parameters.hpp"
 
 Parameters::Parameters(Constant& nums){
-  new_mutator_id=0;
   mutation_rate = set_mutation_rate(nums);
   mutator_effect = set_mutator_effect(nums);
   mutator_mutation_rate = set_mutator_mutation_rate(nums);

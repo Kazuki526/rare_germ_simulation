@@ -18,9 +18,14 @@ struct Constant{
   const double rare_tsg_non_sd = 0.9125167;
   const double rare_tsg_syn_num = 0.490959;
   const double rare_tsg_syn_sd = 0.7278306;
+
+  std::size_t new_mutator_id;
+  std::size_t get_new_mutator(){new_mutator_id++; return new_mutator_id;}
+
   std::mt19937 mt;
   std::bernoulli_distribution bern;
   Constant(){
+    new_mutator_id = 0;
     std::random_device rnd;
     std::mt19937 mt_(rnd());
     mt = mt_;
@@ -41,11 +46,8 @@ struct Parameters
   Parameters(Constant& nums);
   void reset(Constant& nums);
   void set_damage(Constant& nums);
-  std::size_t get_new_mutator(){new_mutator_id++; return new_mutator_id;}
-  std::size_t get_last_mutator(){return new_mutator_id;}
 
 private:
-  std::size_t new_mutator_id;
   double set_mutation_rate(Constant& nums);
   double set_mutator_effect(Constant& nums);
   double set_mutator_mutation_rate(Constant& nums);

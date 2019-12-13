@@ -20,7 +20,7 @@ void Population::set_common_variant(const Constant& nums){
 }
 
 /* make offspring from two Individual */
-Individual Population::reproduct(Constant& nums, const Parameters& param, std::size_t i1, std::size_t i2, bool common_check){
+Individual Population::reproduct(Constant& nums,const Parameters& param, std::size_t i1, std::size_t i2, bool common_check){
 /* mutator */
   std::vector<std::size_t> mutator=individuals[i1].gamate_mutator(nums,param);
   std::vector<std::size_t> mut2=individuals[i2].gamate_mutator(nums,param);
@@ -47,38 +47,36 @@ Individual Population::reproduct(Constant& nums, const Parameters& param, std::s
 /* get all mutation AC */
 void Population::mutation_count(const Constant& nums, const Parameters& param){
   const double rare =nums.N*2.0*0.05*0.01;
-/* mutator */
-  std::vector<std::size_t> mutator_num; mutator_num.reserve(nums.N);
-  for(Individual &ind: individuals){
-    mutator_num.push_back(ind.get_mutator_num());
-  }
-  mutator_freq = (double)std::accumulate(mutator_num.begin(),mutator_num.end(),0)/nums.N;
-/* tsg nonsynonymous */
+  std::vector<std::size_t> mutator_num;
+  mutator_num.reserve(nums.N);
   num_tsg_non_mutation.clear();
   num_tsg_non_mutation.resize(nums.tsg_non_site);
+  num_tsg_syn_mutation.clear();
+  num_tsg_syn_mutation.resize(nums.tsg_syn_site);
   for(Individual &ind: individuals){
+/* mutator */
+    mutator_num.push_back(ind.get_mutator_num());
+/* tsg nonsynonymous */
     for(std::size_t het_mu: ind.get_tsg_non_het()){
       num_tsg_non_mutation[het_mu]++;
     }
     for(std::size_t hom_mu: ind.get_tsg_non_hom()){
       num_tsg_non_mutation[hom_mu]+=2;
     }
-  }
-  rare_tsg_non_freq=0;
-  for(std::size_t mu=0; mu < nums.tsg_non_site; mu++){
-    if(num_tsg_non_mutation[mu] < rare){
-      rare_tsg_non_freq += (double) num_tsg_non_mutation[mu] /nums.N;
-    }
-  }
 /* tsg synonymous */
-  num_tsg_syn_mutation.clear();
-  num_tsg_syn_mutation.resize(nums.tsg_syn_site);
-  for(Individual &ind: individuals){
     for(std::size_t het_mu: ind.get_tsg_syn_het()){
       num_tsg_syn_mutation[het_mu]++;
     }
     for(std::size_t hom_mu: ind.get_tsg_syn_hom()){
       num_tsg_syn_mutation[hom_mu]+=2;
+    }
+  }
+/* count each freq */
+  mutator_freq = (double)std::accumulate(mutator_num.begin(),mutator_num.end(),0)/nums.N;
+  rare_tsg_non_freq=0;
+  for(std::size_t mu=0; mu < nums.tsg_non_site; mu++){
+    if(num_tsg_non_mutation[mu] < rare){
+      rare_tsg_non_freq += (double) num_tsg_non_mutation[mu] /nums.N;
     }
   }
   rare_tsg_syn_freq=0;
@@ -112,68 +110,50 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
   }
 }
 
-void Population::correlation_ns(Constant& nums){
+void Population::correlation_ns(const Constant& nums){
   const int N =nums.N;
   const int patient_n =nums.patient_n;
   const double rare = (N-patient_n)*2*0.05*0.01;
 /* select cancer patient */
-/*  std::unordered_set<std::size_t> patients;
-  std::uniform_int_distribution<> sample_patient(0, N-1);
-  patients.insert(sample_patient(nums.mt));
-  for(std::size_t i = 1; i < patient_n; i++){
-    std::size_t now_i =sample_patient(nums.mt);
-    while(patients.find(now_i) != patients.end()){
-      now_i = sample_patient(nums.mt);
-    }
-    patients.insert(now_i);
-  }
-*/
+/*0~patient_n-1 => cancer patients & patient_n~N => control case */
 
 /* count mutation */
-  std::vector<std::size_t> mutator_allele(param.get_last_mutator,0);
   std::vector<std::size_t> tsg_non_mutation(nums.tsg_non_site,0);
   std::vector<std::size_t> tsg_syn_mutation(nums.tsg_syn_site,0);
-  for(std::size_t i =0;i < N ; i++){
-    if(patients.find(i) != patients.end()){continue;}
-    Individual& ind = individuals[i];
-    for(std::size_t het_mu: ind.get_tsg_non_het()){
+  for(std::size_t i =patient_n; i < N; i++){
+    for(std::size_t het_mu: individuals[i].get_tsg_non_het()){
       tsg_non_mutation[het_mu]++;
     }
-    for(std::size_t hom_mu: ind.get_tsg_non_hom()){
+    for(std::size_t hom_mu: individuals[i].get_tsg_non_hom()){
       tsg_non_mutation[hom_mu]+=2;
     }
-    for(std::size_t het_mu: ind.get_tsg_syn_het()){
+    for(std::size_t het_mu: individuals[i].get_tsg_syn_het()){
       tsg_syn_mutation[het_mu]++;
     }
-    for(std::size_t hom_mu: ind.get_tsg_syn_hom()){
+    for(std::size_t hom_mu: individuals[i].get_tsg_syn_hom()){
       tsg_syn_mutation[hom_mu]+=2;
     }
   }
 /* count patient rare num */
   std::vector<int> non_rare_num(patient_n,0), syn_rare_num(patient_n,0);
-  //std::vector<std::size_t> mutator_num; mutator_num.reserve(patient_n);
   std::vector<double> mutation_rate; mutation_rate.reserve(patient_n);
-  std::vector<std::size_t> patients_list(patients.begin(),patients.end());
   for(std::size_t i=0; i <patient_n; i++){
-    Individual &ind = individuals[patients_list[i]];
-    for(std::size_t tn_het: ind.get_tsg_non_het()){
-      if(tsg_non_mutation[tn_het] < rare){non_rare_num[i]++;}
+    for(std::size_t tn_het: individuals[i].get_tsg_non_het()){
+      if(tsg_non_mutation[tn_het] <= rare){non_rare_num[i]++;}
     }
-    for(std::size_t tn_hom: ind.get_tsg_non_hom()){
-      if(tsg_non_mutation[tn_hom] < rare){non_rare_num[i]+=2;}
+    for(std::size_t tn_hom: individuals[i].get_tsg_non_hom()){
+      if(tsg_non_mutation[tn_hom] <= rare){non_rare_num[i]+=2;}
     }
-    for(std::size_t ts_het: ind.get_tsg_syn_het()){
-      if(tsg_syn_mutation[ts_het] < rare){syn_rare_num[i]++;}
+    for(std::size_t ts_het: individuals[i].get_tsg_syn_het()){
+      if(tsg_syn_mutation[ts_het] <= rare){syn_rare_num[i]++;}
     }
-    for(std::size_t ts_hom: ind.get_tsg_syn_hom()){
-      if(tsg_syn_mutation[ts_hom] < rare){syn_rare_num[i]+=2;}
+    for(std::size_t ts_hom: individuals[i].get_tsg_syn_hom()){
+      if(tsg_syn_mutation[ts_hom] <= rare){syn_rare_num[i]+=2;}
     }
-    //mutator_num.push_back(ind.get_mutator());
-    mutation_rate.push_back(ind.get_mut_r());
+    mutation_rate.push_back(individuals[i].get_mutation_r());
   }
   rare_tsg_non_freq = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/patient_n;
   rare_tsg_syn_freq = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/patient_n;
-  //mutator_freq = (double)std::accumulate(mutator_num.begin(),mutator_num.end(),0)/patient_n;
   mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/patient_n;
   double nonv=0.0, synv=0.0, nonsynv=0.0, mutv=0.0, mutrv=0.0;
   double xy=0.0, xx=0.0, xx_=0.0, xy_=0.0;
@@ -181,7 +161,6 @@ void Population::correlation_ns(Constant& nums){
     nonv+=(double)((non_rare_num[i]-rare_tsg_non_freq)*(non_rare_num[i]-rare_tsg_non_freq));
     synv+=(double)((syn_rare_num[i]-rare_tsg_syn_freq)*(syn_rare_num[i]-rare_tsg_syn_freq));
     nonsynv+=(double)((non_rare_num[i]-rare_tsg_non_freq)*(syn_rare_num[i]-rare_tsg_syn_freq));
-    //mutv+=(double)((mutator_num[i]-mutator_freq)*(mutator_num[i]-mutator_freq));
     mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
     xx+=(non_rare_num[i]-rare_tsg_non_freq)*(non_rare_num[i]-rare_tsg_non_freq);
     xy+=(non_rare_num[i]-rare_tsg_non_freq)*(syn_rare_num[i]-rare_tsg_syn_freq);
@@ -193,6 +172,27 @@ void Population::correlation_ns(Constant& nums){
   rare_non_syn_correlation = (double)(nonsynv/patient_n)/(rare_tsg_non_sd*rare_tsg_syn_sd);
   rare_num_reg = (double) xy/xx;
   rare_num_reg_zero = (double) xy_/xx_;
-  //mutator_sd = std::sqrt((double)mutv/patient_n);
   mutation_rate_sd = std::sqrt((double)mutrv/patient_n);
+}
+
+void Population::out_mutator_state(const Constant& nums, std::ofstream& mutout){
+  std::vector<int> mutator_num(nums.new_mutator_id,0);
+  double have_multi_mutator=0,have_multi_homo=0, have_single_mutator=0;
+  for(Individual &ind: individuals){
+    if(ind.get_mutator_num() >0){
+      if(ind.get_mutator_num() ==1){have_single_mutator++;}else{have_multi_mutator++;}
+      for(std::size_t het: ind.get_mutator_het()){mutator_num[het]++;}
+      for(std::size_t hom: ind.get_mutator_hom()){mutator_num[hom]+=2;have_multi_homo++;}
+    }
+  }
+
+  std::sort(mutator_num.begin(),mutator_num.end(),std::greater<int>());
+  mutout << mutator_freq << "\t";
+  mutout << have_multi_mutator << "\t";
+  mutout << have_multi_homo << "\t"<< have_single_mutator;
+  for(std::size_t i=0; i<10; i++){
+    mutout << "\t" <<mutator_num[i];
+  }
+  mutout << "\n";
+  mutout.flush();
 }

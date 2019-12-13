@@ -8,7 +8,7 @@ Individual::Individual(const std::vector<std::size_t>& mutator,
   mutator_num=mutator.size();
   for(std::size_t mu: mutator){
     if(std::count(mutator.begin(), mutator.end(), mu) >2){
-      if(std::find(mutator_hom.begin(), mutator_hom.end(), mu) != mutater_hom.end()){
+      if(std::find(mutator_hom.begin(), mutator_hom.end(), mu) != mutator_hom.end()){
         mutator_hom.push_back(mu);
       }
     }else{
@@ -79,7 +79,7 @@ void Individual::set_param(Constant& nums, const Parameters& param){
 }
 
 /* gamate methods */
-std::vector<std::size_t> Individual::gamate_mutator(Constant& nums, Parameters& param){
+std::vector<std::size_t> Individual::gamate_mutator(Constant& nums, const Parameters& param){
   std::vector<std::size_t> new_mutator =mutator_hom;
   for(std::size_t mu: mutator_het){
     if(nums.bern(nums.mt)){new_mutator.push_back(mu);}
@@ -87,7 +87,7 @@ std::vector<std::size_t> Individual::gamate_mutator(Constant& nums, Parameters& 
   /* add mutation */
  std::bernoulli_distribution p_mutator(param.mutator_mutation_rate);
  if(p_mutator(nums.mt)){
-   new_mutator.push_back(param.get_new_mutator());
+   new_mutator.push_back(nums.get_new_mutator());
  }
   return new_mutator;
 }

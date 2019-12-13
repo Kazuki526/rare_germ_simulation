@@ -23,7 +23,7 @@ public:
              const std::vector<std::size_t>& tsg_syn,
              const std::unordered_set<std::size_t>& tsg_non_common={},
              const std::unordered_set<std::size_t>& tsg_syn_common={});
-  const std::size_t get_mutator_mum(){return mutator_num;}
+  const std::size_t get_mutator_num(){return mutator_num;}
   const std::vector<std::size_t>& get_mutator_het(){return mutator_het;}
   const std::vector<std::size_t>& get_mutator_hom(){return mutator_hom;}
   const std::vector<std::size_t>& get_tsg_non_het(){return tsg_non_het;}
@@ -34,7 +34,7 @@ public:
   double get_fitness(){return fitness;}
   void set_param(Constant& nums, const Parameters& param);
   /* gamate */
-  std::vector<std::size_t> gamate_mutator(Constant& nums, Parameters& param);
+  std::vector<std::size_t> gamate_mutator(Constant& nums, const Parameters& param);
   std::vector<std::size_t> gamate_tsg_non(Constant& nums, const Parameters& param);
   std::vector<std::size_t> gamate_tsg_syn(Constant& nums, const Parameters& param);
 };

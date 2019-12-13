@@ -3,6 +3,10 @@
 #define POP_HPP
 
 #include <numeric>
+#include <string>
+#include <functional>
+#include <fstream>
+#include <stdio.h>
 #include "individual.hpp"
 
 class Population
@@ -33,7 +37,8 @@ public:
   Population(Constant& nums, const Parameters& param);
   void set_common_variant(const Constant& nums);
   void next_generation(Constant& nums, const Parameters& param, bool common_variant=false);
-  void correlation_ns(Constant& nums);
+  void correlation_ns(const Constant& nums);
+  void out_mutator_state(const Constant& nums, std::ofstream& mutout);
 };
 
 
