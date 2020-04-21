@@ -5,7 +5,7 @@ Parameters::Parameters(Constant& nums){
   mutator_effect = set_mutator_effect(nums);
   mutator_mutation_rate = set_mutator_mutation_rate(nums);
   mutator_damage = set_mutator_damage(nums);
-  tsg_non_damage_e = set_tsg_non_damage_e(nums);
+  non_damage_e = set_non_damage_e(nums);
 
   double m=mutator_mutation_rate, s=mutator_damage, e=mutator_effect;
   double p = m/s+0.5-m/2-std::pow((m/s+(1-m)/2)*(m/s+(1-m)/2)-m/s,0.5);
@@ -20,7 +20,7 @@ void Parameters::reset(Constant& nums){
   mutator_effect = set_mutator_effect(nums);
   mutator_mutation_rate = set_mutator_mutation_rate(nums);
   mutator_damage = set_mutator_damage(nums);
-  tsg_non_damage_e = set_tsg_non_damage_e(nums);
+  non_damage_e = set_non_damage_e(nums);
 
   double m=mutator_mutation_rate, s=mutator_damage, e=mutator_effect;
   double p = m/s+0.5-m/2-std::pow((m/s+(1-m)/2)*(m/s+(1-m)/2)-m/s,0.5);
@@ -31,35 +31,36 @@ void Parameters::reset(Constant& nums){
              (e*e*mutation_rate-mutr)*(e*e*mutation_rate-mutr)*p*p,0.5);
 }
 
-/* set each TSG site damage */
+/* set each nonsynonymous site damage */
 void Parameters::set_damage(Constant& nums){
-  std::exponential_distribution<> tsg_ex(1.0/tsg_non_damage_e);
-  for(std::size_t s=0; s < nums.tsg_non_site; s++){
-    tsg_non_damage.push_back(tsg_ex(nums.mt));
+  std::exponential_distribution<> non_ex(1.0/non_damage_e);
+  for(std::size_t s=0; s < nums.non_site; s++){
+    non_damage.push_back(non_ex(nums.mt));
   }
 }
 
 /*set each parameters */
 double Parameters::set_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0.000000005,0.00000003);
+  std::uniform_real_distribution<> dist(0, 0.00000003);
   return dist(nums.mt);
 }
 double Parameters::set_mutator_effect(Constant& nums){
-  std::uniform_real_distribution<> dist(50.0, 100.0);
+  std::uniform_real_distribution<> dist(2.0, 200.0);
   return dist(nums.mt);
 }
-double Parameters::set_mutator_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0.00001, 0.0004);
+double Parameters::set_non_damage_e(Constant& nums){
+  std::uniform_real_distribution<> dist(0, 0.05);
   return dist(nums.mt);
 }
 double Parameters::set_mutator_damage(Constant& nums){
-  std::uniform_real_distribution<> dist(0.0001, 0.015);
+  std::uniform_real_distribution<> dist(0, 0.015);
   return dist(nums.mt);
 }
-double Parameters::set_tsg_non_damage_e(Constant& nums){
-  std::uniform_real_distribution<> dist(0.015, 0.03);
+double Parameters::set_mutator_mutation_rate(Constant& nums){
+  std::uniform_real_distribution<> dist(0, 0.001);
   return dist(nums.mt);
 }
+
 
 
 

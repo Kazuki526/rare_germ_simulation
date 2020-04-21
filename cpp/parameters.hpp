@@ -9,16 +9,22 @@
 #include <unordered_set>
 #include <cmath>
 
+// non = nonsynonymous, syn = synonymous
 struct Constant{
-  const std::size_t N = 56418;
-  const std::size_t patient_n =6418;
-  const std::size_t tsg_non_site = 191624;
-  const std::size_t tsg_syn_site = 61470;
-  const double rare_tsg_non_num = 0.7642481;
-  const double rare_tsg_non_sd = 0.9125167;
-  const double rare_tsg_syn_num = 0.490959;
-  const double rare_tsg_syn_sd = 0.7278306;
-
+  const std::size_t N = 50000;
+  const std::size_t patient_n = 503;
+  // tsg_non_site = , control_non_site = 1270003
+  const std::size_t non_site = 1270003;
+  // tsg_syn_site = , control_syn_site = 414929
+  const std::size_t syn_site = 414929;
+  // rare_tsg_non_num = , rare_cg_non_num = 2.8051689860835
+  const double rare_non_num = 2.8051689860835;
+  //rare_tsg_non_sd = , rare_cg_non_sd = 1.90663893622778
+  const double rare_non_sd = 1.90663893622778;
+  //rare_tsg_syn_num = , rare_cg_syn_num = 1.54870775347913
+  const double rare_syn_num = 1.54870775347913;
+  //rare_tsg_syn_sd = , rare_cg_syn_sd = 1.38039536172101
+  const double rare_syn_sd = 1.38039536172101;
   std::size_t new_mutator_id;
   std::size_t get_new_mutator(){new_mutator_id++; return new_mutator_id;}
 
@@ -40,8 +46,8 @@ struct Parameters
   double mutator_effect;
   double mutator_mutation_rate;
   double mutator_damage;
-  double tsg_non_damage_e;
-  std::vector<double> tsg_non_damage;
+  double non_damage_e;
+  std::vector<double> non_damage;
   double expected_mutation_sd;
   Parameters(Constant& nums);
   void reset(Constant& nums);
@@ -52,8 +58,8 @@ private:
   double set_mutator_effect(Constant& nums);
   double set_mutator_mutation_rate(Constant& nums);
   double set_mutator_damage(Constant& nums);
-  double set_tsg_non_damage_e(Constant& nums);
-  void set_tsg_non_damage(Constant& nums);
+  double set_non_damage_e(Constant& nums);
+  void set_non_damage(Constant& nums);
 };
 
 double log_random(double start, double end, std::mt19937& mt);
