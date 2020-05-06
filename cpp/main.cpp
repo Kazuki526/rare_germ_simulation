@@ -20,7 +20,10 @@ void print_out(const Parameters& param,
 }
 
 void one_replicate(int replicate, Constant& nums, const Parameters& param,
-                   Population& population, std::ofstream& outfile, std::ofstream& mutout){
+                   Population& population, std::ofstream& outfile,
+                   std::ofstream& mutout, std::ofstream& logout){
+  logout <<param.mutation_rate<<":"<<param.mutator_effect<<":"<<param.mutator_mutation_rate;
+  logout <<":"<<param.mutator_damage<<":"<<param.non_damage_e<<" => ";logout.flush();
   bool mut_equiv=true, non_equiv=true, syn_equiv=true;
   std::vector<double> mutator;
   std::vector<double> non;
@@ -30,8 +33,7 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
     generation++;
     if(generation%50==0){
       population.next_generation(nums, param, true);
-      std::cout << generation << " =>";std::cout.flush();
-      population.out_mutator_state(nums, mutout);
+      logout << generation << "> ";logout.flush();
     }else{
         population.next_generation(nums, param);
     }
@@ -52,11 +54,9 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
       if(syn_equiv) {syn_equiv = equib_lm(syn);}
     }
     if((population.rare_non_freq > nums.rare_non_num*2)||
-       (population.rare_syn_freq > nums.rare_syn_num*2)){break;std::cout<<"stop\n";}
-    //std::cout <<t<<" "<<population.rare_syn_freq<<" "<<population.mutator_freq<<"\n";std::cout.flush();
-    //if(t % 100 == 0){std::cout << "now " << t << " generation " << mut_equiv << non_equiv << syn_equiv << "\n";std::cout.flush();}
+       (population.rare_syn_freq > nums.rare_syn_num*2)){logout<<"stop\n";logout.flush();break;}
   }
-  std::cout << " finish and go sumary\n";std::cout.flush();
+  //logout << " finish and go sumary\n";logout.flush();
   if(!mut_equiv && !non_equiv && !syn_equiv){ /* not stoped by too much rare variant */
     std::vector<double> n_num,n_sd,s_num,s_sd,cor,mut,mutr,mutr_sd,rare_num_reg;
     for(int aft_gene=1; aft_gene <= 500; aft_gene++){
@@ -69,7 +69,7 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
         population.next_generation(nums, param);
       }
       if(aft_gene %10 ==0){
-        std::cout << generation << " =>";std::cout.flush();
+        logout << generation << "=> ";logout.flush();
         population.correlation_ns(nums);
         //print_out(nums,param,population,outfile);
         n_num.push_back(population.rare_non_freq);
@@ -83,6 +83,7 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
         mutr_sd.push_back(population.mutation_rate_sd);
       }
     }
+    outfile << replicate << "\t";
     outfile << generation <<"\t";
     population.rare_non_freq = (double)std::accumulate(n_num.begin(),n_num.end(),0.0) /n_num.size();
     population.rare_non_sd = (double)std::accumulate(n_sd.begin(),n_sd.end(),0.0) /n_sd.size();
@@ -96,7 +97,8 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
     print_out(param,population,outfile);
   }else{ /* when stoped by too much rare variant */
     population.correlation_ns(nums);
-    outfile<< generation <<"\t";
+    outfile << replicate << "\t";
+    outfile << generation <<"\t";
     print_out(param,population,outfile);
   }
 }
@@ -104,7 +106,7 @@ int main(int argc,char *argv[])
 {
   std::ofstream outfile;
   outfile.open("simulation_result"+std::string(argv[1])+".tsv", std::ios::out);
-  outfile << "generation\tmutation_rate\tmutator_effect\t";
+  outfile << "replicate\tgeneration\tmutation_rate\tmutator_effect\t";
   outfile << "mutator_mutation_rate\tmutator_damage\tnon_damage_e\t";
   outfile << "non_num\tnon_sd\t";
   outfile << "syn_num\tsyn_sd\t";
@@ -117,17 +119,20 @@ int main(int argc,char *argv[])
   mutout << "mutator_freq\thave_multi_mutator\thave_multi_homo\thave_single_mutator\t";
   mutout << "AF1\tAF2\tAF3\tAF4\tAF5\tAF6\tAF7\tAF8\tAF9\tAF10\n";
 
+  std::ofstream logout;
+  logout.open("log/outlog"+std::string(argv[1])+".txt",std::ios::out);
+
   Constant nums;
   int replicate=1;
-  while(replicate <=100){
+  while(replicate <=500){
     Parameters param(nums);
     //int t=0;
     //while(param.expected_mutation_sd<0.0000005){param.reset(nums);t++;}
-    //std::cout << t << " time reparam\t";
+    //logout << t << " time reparam\t";
     param.set_damage(nums);
     Population population(nums,param);
-    one_replicate(replicate, nums, param, population, outfile, mutout);
-    std::cout << "done " << replicate << " time\n";std::cout.flush();
+    one_replicate(replicate, nums, param, population, outfile, mutout,logout);
+    logout << "done " << replicate << " time\n";logout.flush();
     replicate++;
   }
 

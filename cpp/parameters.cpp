@@ -45,7 +45,7 @@ double Parameters::set_mutation_rate(Constant& nums){
   return dist(nums.mt);
 }
 double Parameters::set_mutator_effect(Constant& nums){
-  std::uniform_real_distribution<> dist(2.0, 200.0);
+  std::uniform_real_distribution<> dist(2.0, 1000.0);
   return dist(nums.mt);
 }
 double Parameters::set_non_damage_e(Constant& nums){
@@ -53,11 +53,11 @@ double Parameters::set_non_damage_e(Constant& nums){
   return dist(nums.mt);
 }
 double Parameters::set_mutator_damage(Constant& nums){
-  std::uniform_real_distribution<> dist(0, 0.015);
+  std::uniform_real_distribution<> dist(0, 0.1);
   return dist(nums.mt);
 }
 double Parameters::set_mutator_mutation_rate(Constant& nums){
-  std::uniform_real_distribution<> dist(0, 0.001);
+  std::uniform_real_distribution<> dist(0, 0.005);
   return dist(nums.mt);
 }
 
