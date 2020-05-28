@@ -9,14 +9,14 @@
 #include <unordered_set>
 #include <cmath>
 
-// non = nonsynonymous, syn = synonymous
+// non = nonsynonymous, syn = synonymous; real site num = site_num/3
 struct Constant{
   const std::size_t N = 50000;
-  const std::size_t patient_n = 503;
+  const std::size_t sample_n = 503;
   // tsg_non_site = , control_non_site = 1270003
-  const std::size_t non_site = 1270003;
+  const double non_site = 1270003;
   // tsg_syn_site = , control_syn_site = 414929
-  const std::size_t syn_site = 414929;
+  const double syn_site = 414929;
   // rare_tsg_non_num = , rare_cg_non_num = 2.8051689860835
   const double rare_non_num = 2.8051689860835;
   //rare_tsg_non_sd = , rare_cg_non_sd = 1.90663893622778
@@ -43,10 +43,12 @@ struct Constant{
 struct Parameters
 {
   double mutation_rate;
+  //double repair_power=10000;
   double mutator_effect;
   double mutator_mutation_rate;
   double mutator_damage;
   double non_damage_e;
+  double mutator_s;
   std::vector<double> non_damage;
   double expected_mutation_sd;
   Parameters(Constant& nums);

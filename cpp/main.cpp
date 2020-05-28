@@ -25,9 +25,9 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
   logout <<param.mutation_rate<<":"<<param.mutator_effect<<":"<<param.mutator_mutation_rate;
   logout <<":"<<param.mutator_damage<<":"<<param.non_damage_e<<" => ";logout.flush();
   bool mut_equiv=true, non_equiv=true, syn_equiv=true;
-  std::vector<double> mutator;
-  std::vector<double> non;
-  std::vector<double> syn;
+  std::vector<double> mutator_freq_list;
+  std::vector<double> non_freq_list;
+  std::vector<double> syn_freq_list;
   int generation=0;
   while(mut_equiv || non_equiv || syn_equiv){
     generation++;
@@ -38,23 +38,26 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
         population.next_generation(nums, param);
     }
 
-    if(generation<=1000){
-      mutator.push_back(population.mutator_freq);
-      non.push_back(population.rare_non_freq);
-      syn.push_back(population.rare_syn_freq);
+    if(generation<=500){
+      mutator_freq_list.push_back(population.mutator_freq);
+      non_freq_list.push_back(population.rare_non_freq);
+      syn_freq_list.push_back(population.rare_syn_freq);
     }else{
-      mutator.push_back(population.mutator_freq);
-      mutator.erase(mutator.begin());
-      non.push_back(population.rare_non_freq);
-      non.erase(non.begin());
-      syn.push_back(population.rare_syn_freq);
-      syn.erase(syn.begin());
-      if(mut_equiv){mut_equiv = equib_lm(mutator);}
-      if(non_equiv) {non_equiv = equib_lm(non);}
-      if(syn_equiv) {syn_equiv = equib_lm(syn);}
+      mutator_freq_list.push_back(population.mutator_freq);
+      mutator_freq_list.erase(mutator_freq_list.begin());
+      non_freq_list.push_back(population.rare_non_freq);
+      non_freq_list.erase(non_freq_list.begin());
+      syn_freq_list.push_back(population.rare_syn_freq);
+      syn_freq_list.erase(syn_freq_list.begin());
+      if(mut_equiv){mut_equiv = equib_lm(mutator_freq_list);}
+      if(non_equiv) {non_equiv = equib_lm(non_freq_list);}
+      if(syn_equiv) {syn_equiv = equib_lm(syn_freq_list);}
     }
-    if((population.rare_non_freq > nums.rare_non_num*2)||
-       (population.rare_syn_freq > nums.rare_syn_num*2)){logout<<"stop\n";logout.flush();break;}
+    if((population.rare_non_freq > nums.rare_non_num*1.5)||
+       (population.rare_syn_freq > nums.rare_syn_num*1.5)){logout<<"stop";logout.flush();break;}
+    if((generation>=500)&&
+       ((population.rare_non_freq < nums.rare_non_num*0.5)||
+        (population.rare_syn_freq < nums.rare_syn_num*0.5))){logout<<"stop";logout.flush();break;}
   }
   //logout << " finish and go sumary\n";logout.flush();
   if(!mut_equiv && !non_equiv && !syn_equiv){ /* not stoped by too much rare variant */
@@ -99,6 +102,8 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
     population.correlation_ns(nums);
     outfile << replicate << "\t";
     outfile << generation <<"\t";
+    population.rare_non_syn_correlation=0;
+    population.rare_num_reg=0;
     print_out(param,population,outfile);
   }
 }
@@ -124,15 +129,21 @@ int main(int argc,char *argv[])
 
   Constant nums;
   int replicate=1;
-  while(replicate <=500){
+  while(replicate <=5000){
     Parameters param(nums);
     //int t=0;
     //while(param.expected_mutation_sd<0.0000005){param.reset(nums);t++;}
     //logout << t << " time reparam\t";
     param.set_damage(nums);
     Population population(nums,param);
-    one_replicate(replicate, nums, param, population, outfile, mutout,logout);
-    logout << "done " << replicate << " time\n";logout.flush();
+    if(param.mutator_s>1 || param.mutation_rate>0.00000008 || param.non_damage_e>0.04){
+      outfile << replicate << "\t0\t";
+      print_out(param,population,outfile);
+      logout << "done " << replicate << " time\n";logout.flush();
+    }else{
+      one_replicate(replicate, nums, param, population, outfile, mutout,logout);
+      logout << "done " << replicate << " time\n";logout.flush();
+    }
     replicate++;
   }
 

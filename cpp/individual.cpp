@@ -61,21 +61,20 @@ Individual::Individual(const std::vector<std::size_t>& mutator,
 }
 
 void Individual::set_param(Constant& nums, const Parameters& param){
-  /* set fitness */
-  fitness=1;
-  for(std::size_t i=1; i <= mutator_num; i++){fitness*=(1-param.mutator_damage);}
-  for(std::size_t mu: non_het){fitness*=(1-param.non_damage[mu]);}
-  for(std::size_t mu: non_hom){fitness*=((1-param.non_damage[mu])*(1-param.non_damage[mu]));}
-  //for(std::size_t m=0; m < non_het.size();m++){fitness*=(1-param.non_damage_e);}
-  //for(std::size_t m=0; m < non_hom.size();m++){fitness*=((1-param.non_damage_e)*(1-param.non_damage_e));}
   /* mutation rate */
   mutation_r = param.mutation_rate;
-  /*#######################################################################*/
   /* all mutator affect synergistic */
   for(std::size_t i=1; i <= mutator_num; i++){mutation_r*=param.mutator_effect;}
   /* mutator effect, dif allele additive and hom synergistic */
   //if(mutator_num>0){mutation_r *= param.mutator_effect*mutator_het.size() + param.mutator_effect*param.mutator_effect*mutator_hom.size();}
-  /*#######################################################################*/
+  /* if mutator is mutation of repair pathway */
+  //if(mutator_num >0){mutation_r *= param.repair_power*(1- std::pow(1-t, mutator_num));}
+  /* set fitness */
+  fitness = 1;
+  fitness*=(1 - param.mutator_damage*(mutation_r - param.mutation_rate));
+  if(fitness<0){fitness=0;}
+  for(std::size_t mu: non_het){fitness*=(1-param.non_damage[mu]);}
+  for(std::size_t mu: non_hom){fitness*=((1-param.non_damage[mu])*(1-param.non_damage[mu]));}
 }
 
 /* gamate methods */
@@ -98,7 +97,7 @@ std::vector<std::size_t> Individual::gamate_non(Constant& nums, const Parameters
     if(nums.bern(nums.mt)){new_non.push_back(het_mu);}
   }
   /* add mutation */
-  std::poisson_distribution<> pois_non(nums.non_site*mutation_r);
+  std::poisson_distribution<> pois_non((nums.non_site/3)*mutation_r);
   std::uniform_int_distribution<> non_mut(0, nums.non_site -1);
   int non_num=pois_non(nums.mt);
   for(std::size_t n=1; n <=non_num; n++){
@@ -113,7 +112,7 @@ std::vector<std::size_t> Individual::gamate_syn(Constant& nums, const Parameters
     if(nums.bern(nums.mt)){new_syn.push_back(het_mu);}
   }
   /* add mutation */
-  std::poisson_distribution<> pois_syn(nums.syn_site*mutation_r);
+  std::poisson_distribution<> pois_syn((nums.syn_site/3)*mutation_r);
   std::uniform_int_distribution<> syn_mut(0, nums.syn_site -1);
   int syn_num=pois_syn(nums.mt);
   for(std::size_t n=1; n <= syn_num; n++){

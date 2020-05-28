@@ -112,16 +112,16 @@ void Population::next_generation(Constant& nums, const Parameters& param, bool c
 
 void Population::correlation_ns(const Constant& nums){
   const int N =nums.N;
-  const int patient_n =nums.patient_n;
-  const double rare = (N-patient_n)*2*0.05*0.01;
+  const int sample_n =nums.sample_n;
+  const double rare = (N-sample_n)*2*0.05*0.01;
 /* select sample */
 /* individual is randomly arranged */
-/*0 ~ patient_n-1 => sample & patient_n ~ N-1 => non sample */
+/*0 ~ sample_n-1 => sample & sample_n ~ N-1 => non sample */
 
 /* count mutation */
   std::vector<std::size_t> non_mutation(nums.non_site,0);
   std::vector<std::size_t> syn_mutation(nums.syn_site,0);
-  for(std::size_t i =patient_n; i < N; i++){
+  for(std::size_t i =sample_n; i < N; i++){
     for(std::size_t het_mu: individuals[i].get_non_het()){
       non_mutation[het_mu]++;
     }
@@ -135,10 +135,10 @@ void Population::correlation_ns(const Constant& nums){
       syn_mutation[hom_mu]+=2;
     }
   }
-/* count patient rare num */
-  std::vector<int> non_rare_num(patient_n,0), syn_rare_num(patient_n,0);
-  std::vector<double> mutation_rate; mutation_rate.reserve(patient_n);
-  for(std::size_t i=0; i <patient_n; i++){
+/* count sample rare num */
+  std::vector<int> non_rare_num(sample_n,0), syn_rare_num(sample_n,0);
+  std::vector<double> mutation_rate; mutation_rate.reserve(sample_n);
+  for(std::size_t i=0; i <sample_n; i++){
     for(std::size_t non_het: individuals[i].get_non_het()){
       if(non_mutation[non_het] <= rare){non_rare_num[i]++;}
     }
@@ -153,22 +153,22 @@ void Population::correlation_ns(const Constant& nums){
     }
     mutation_rate.push_back(individuals[i].get_mutation_r());
   }
-  rare_non_freq = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/patient_n;
-  rare_syn_freq = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/patient_n;
-  mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/patient_n;
+  rare_non_freq = (double)std::accumulate(non_rare_num.begin(),non_rare_num.end(),0.0)/sample_n;
+  rare_syn_freq = (double)std::accumulate(syn_rare_num.begin(),syn_rare_num.end(),0.0)/sample_n;
+  mutation_rate_ave = (double)std::accumulate(mutation_rate.begin(),mutation_rate.end(),0.0)/sample_n;
   double nonv=0.0, synv=0.0, nonsynv=0.0, mutv=0.0, mutrv=0.0;
-  for(std::size_t i=0; i < patient_n; i++){
+  for(std::size_t i=0; i < sample_n; i++){
     nonv+=(double)((non_rare_num[i]-rare_non_freq)*(non_rare_num[i]-rare_non_freq));
     synv+=(double)((syn_rare_num[i]-rare_syn_freq)*(syn_rare_num[i]-rare_syn_freq));
     nonsynv+=(double)((non_rare_num[i]-rare_non_freq)*(syn_rare_num[i]-rare_syn_freq));
     mutrv+=(double)((mutation_rate[i]-mutation_rate_ave)*(mutation_rate[i]-mutation_rate_ave));
 
   }
-  rare_non_sd = std::sqrt((double)nonv/patient_n);
-  rare_syn_sd = std::sqrt((double)synv/patient_n);
-  rare_non_syn_correlation = (double)(nonsynv/patient_n)/(rare_non_sd*rare_syn_sd);
+  rare_non_sd = std::sqrt((double)nonv/sample_n);
+  rare_syn_sd = std::sqrt((double)synv/sample_n);
+  rare_non_syn_correlation = (double)(nonsynv/sample_n)/(rare_non_sd*rare_syn_sd);
   rare_num_reg = (double) nonsynv/nonv;
-  mutation_rate_sd = std::sqrt((double)mutrv/patient_n);
+  mutation_rate_sd = std::sqrt((double)mutrv/sample_n);
 }
 
 void Population::out_mutator_state(const Constant& nums, std::ofstream& mutout){
