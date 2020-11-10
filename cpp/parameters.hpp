@@ -7,6 +7,7 @@
 #include <vector>
 #include <random>
 #include <unordered_set>
+#include <unordered_map>
 #include <cmath>
 
 // non = nonsynonymous, syn = synonymous; real site num = site_num/3

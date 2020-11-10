@@ -27,18 +27,21 @@ ns_correlation = 0.1988867
 #tsg_non, synの数
 tbl %>>%filter(correlation!=0)%>>%
   ggplot()+geom_point(aes(x=non_num,y=mutation_rate,color=mutation_rate_freq))+
-  geom_vline(xintercept = non_number)
+  geom_vline(xintercept = non_number*1.2)+geom_vline(xintercept = non_number*0.8)
 tbl %>>%filter(correlation!=0)%>>%
   ggplot()+geom_point(aes(y=syn_num,x=mutation_rate,color=correlation))+
   geom_hline(yintercept = syn_number*1.2)+geom_hline(yintercept = syn_number*0.8)
 tbl %>>%filter(correlation!=0)%>>%
-  mutate(mutator_s_rank=ifelse(mutation_rate*mutator_effect*mutator_damage>1,"out","ok"))%>>%
-  ggplot()+geom_histogram(aes(x=correlation,fill=mutator_s_rank))+
-  geom_vline(xintercept = ns_correlation*1.2)+geom_vline(xintercept = ns_correlation*0.8)
+  mutate(num_accept=ifelse((non_num+syn_num >(non_number+syn_number)*(1-conf_wid) & non_num+syn_num<(non_number+syn_number)*(1+conf_wid))&
+                             (non_num/syn_num >non_number/syn_number*(1-conf_wid) & non_num/syn_num<non_number/syn_number*(1+conf_wid)),
+         "accept","out"))%>>%
+  ggplot()+geom_point(aes(x=reg_R,y=correlation,color=num_accept))+
+  geom_vline(xintercept = ns_regression*1.2)+geom_vline(xintercept = ns_regression*0.8)+
+  geom_hline(yintercept = ns_correlation*1.2)+geom_hline(yintercept = ns_correlation*0.8)
+
 
 #### mutator_freqの予測 ####
 tbl %>>%filter(correlation!=0)%>>%
-
   #mutate(smut=(mutation_rate*mutator_effect*mutator_damage))%>>%ggplot()+geom_histogram(aes(x=smut))
   mutate(e_mutator_freq=mutator_mutation_rate/(mutation_rate*mutator_effect*mutator_damage))%>>%
   filter(e_mutator_freq<0.1,(mutation_rate*mutator_effect*mutator_damage)<1)%>>%
@@ -49,7 +52,15 @@ tbl %>>%filter(correlation!=0)%>>%
 
 
 ########mutator_freqが与えられていると、、、#########
-tbl %>>%filter(correlation>0)%>>%
+tbl %>>%filter(correlation!=0)%>>%
+  filter(non_num+syn_num >(non_number+syn_number)*(1-conf_wid),non_num+syn_num<(non_number+syn_number)*(1+conf_wid)) %>>%
+  filter(non_num/syn_num >non_number/syn_number*(1-conf_wid),non_num/syn_num<non_number/syn_number*(1+conf_wid)) %>>%
+  filter(reg_R >ns_regression*(1-conf_wid),reg_R<ns_regression*(1+conf_wid)) %>>%(?.)%>>%
+  filter(correlation > ns_correlation*(1-conf_wid),correlation<ns_correlation*(1+conf_wid)) %>>%(?.)%>>%
+  mutate(test = mutator_freq*mutator_effect*non_damage_e)%>>%
+  ggplot()+
+  geom_histogram(aes(x=test))
+  
   mutate(e_mutation_rate = mutation_rate*(1-mutator_freq+mutator_freq*mutator_effect))%>>%
   ggplot()+
   geom_point(aes(x=e_mutation_rate,y=syn_num))

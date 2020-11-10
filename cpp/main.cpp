@@ -33,12 +33,14 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
     generation++;
     if(generation%50==0){
       population.next_generation(nums, param, true);
+      population.mutation_count(nums, param);
       logout << generation << "> ";logout.flush();
     }else{
         population.next_generation(nums, param);
+        population.mutation_count(nums, param);
     }
 
-    if(generation<=500){
+    if(generation<=100){
       mutator_freq_list.push_back(population.mutator_freq);
       non_freq_list.push_back(population.rare_non_freq);
       syn_freq_list.push_back(population.rare_syn_freq);
@@ -53,52 +55,41 @@ void one_replicate(int replicate, Constant& nums, const Parameters& param,
       if(non_equiv) {non_equiv = equib_lm(non_freq_list);}
       if(syn_equiv) {syn_equiv = equib_lm(syn_freq_list);}
     }
-    if((population.rare_non_freq > nums.rare_non_num*1.5)||
-       (population.rare_syn_freq > nums.rare_syn_num*1.5)){logout<<"stop";logout.flush();break;}
-    if((generation>=500)&&
-       ((population.rare_non_freq < nums.rare_non_num*0.5)||
-        (population.rare_syn_freq < nums.rare_syn_num*0.5))){logout<<"stop";logout.flush();break;}
+    if((population.rare_non_freq > nums.rare_non_num*2)||
+       (population.rare_syn_freq > nums.rare_syn_num*2)){logout<<"stop";logout.flush();break;}
+//    if((generation>=500)&&
+//       ((population.rare_non_freq < nums.rare_non_num*0.5)||
+//        (population.rare_syn_freq < nums.rare_syn_num*0.5))){logout<<"stop";logout.flush();break;}
   }
-  //logout << " finish and go sumary\n";logout.flush();
+
+  logout << generation << "=> summary >";logout.flush();
   if(!mut_equiv && !non_equiv && !syn_equiv){ /* not stoped by too much rare variant */
-    std::vector<double> n_num,n_sd,s_num,s_sd,cor,mut,mutr,mutr_sd,rare_num_reg;
-    for(int aft_gene=1; aft_gene <= 500; aft_gene++){
-      generation++;
-      if(aft_gene %50 ==0){
-        population.next_generation(nums, param, true);
-        mutout << replicate << "\t" << generation << "\t";
-        population.out_mutator_state(nums, mutout);
-      }else{
+    if(generation<500){
+      while(generation==500){
+        generation++;
+        if(generation%50==0){
+          population.next_generation(nums, param, true);
+        }else{
+          population.next_generation(nums, param);
+        }
+      }
+    }else{
+      for(int gene=1; gene<=50; gene++){
+        generation++;
         population.next_generation(nums, param);
       }
-      if(aft_gene %10 ==0){
-        logout << generation << "=> ";logout.flush();
-        population.correlation_ns(nums);
-        //print_out(nums,param,population,outfile);
-        n_num.push_back(population.rare_non_freq);
-        n_sd.push_back(population.rare_non_sd);
-        s_num.push_back(population.rare_syn_freq);
-        s_sd.push_back(population.rare_syn_sd);
-        cor.push_back(population.rare_non_syn_correlation);
-        rare_num_reg.push_back(population.rare_num_reg);
-        mut.push_back(population.mutator_freq);
-        mutr.push_back(population.mutation_rate_ave);
-        mutr_sd.push_back(population.mutation_rate_sd);
-      }
     }
+    logout <<" >";logout.flush();
+    population.mutation_count(nums, param);
+    logout <<" >";logout.flush();
+    population.correlation_ns(nums);
     outfile << replicate << "\t";
-    outfile << generation <<"\t";
-    population.rare_non_freq = (double)std::accumulate(n_num.begin(),n_num.end(),0.0) /n_num.size();
-    population.rare_non_sd = (double)std::accumulate(n_sd.begin(),n_sd.end(),0.0) /n_sd.size();
-    population.rare_syn_freq = (double)std::accumulate(s_num.begin(),s_num.end(),0.0) /s_num.size();
-    population.rare_syn_sd = (double)std::accumulate(s_sd.begin(),s_sd.end(),0.0) /s_sd.size();
-    population.rare_non_syn_correlation = (double)std::accumulate(cor.begin(),cor.end(),0.0) /cor.size();
-    population.rare_num_reg =(double)std::accumulate(rare_num_reg.begin(),rare_num_reg.end(),0.0) /rare_num_reg.size();
-    population.mutator_freq = (double)std::accumulate(mut.begin(),mut.end(),0.0) /mut.size();
-    population.mutation_rate_ave = (double)std::accumulate(mutr.begin(),mutr.end(),0.0) /mutr.size();
-    population.mutation_rate_sd = (double)std::accumulate(mutr_sd.begin(),mutr_sd.end(),0.0) /mutr_sd.size();
+    outfile << generation <<"\t";outfile.flush();
     print_out(param,population,outfile);
+    mutout << replicate << "\t" << generation << "\t";mutout.flush();
+    population.out_mutator_state(nums, mutout);
   }else{ /* when stoped by too much rare variant */
+    logout <<" >";logout.flush();
     population.correlation_ns(nums);
     outfile << replicate << "\t";
     outfile << generation <<"\t";
@@ -120,7 +111,7 @@ int main(int argc,char *argv[])
 
   std::ofstream mutout;
   mutout.open("simulation_result_mutator"+std::string(argv[1])+".tsv",std::ios::out);
-  mutout << "replicate\tgeneration\t";
+  mutout << "replicate\tgeneration\tnum_id\t";
   mutout << "mutator_freq\thave_multi_mutator\thave_multi_homo\thave_single_mutator\t";
   mutout << "AF1\tAF2\tAF3\tAF4\tAF5\tAF6\tAF7\tAF8\tAF9\tAF10\n";
 
@@ -129,14 +120,13 @@ int main(int argc,char *argv[])
 
   Constant nums;
   int replicate=1;
-  while(replicate <=5000){
+  while(replicate <=1000000){
+    nums.new_mutator_id=0;
     Parameters param(nums);
-    //int t=0;
-    //while(param.expected_mutation_sd<0.0000005){param.reset(nums);t++;}
-    //logout << t << " time reparam\t";
     param.set_damage(nums);
     Population population(nums,param);
-    if(param.mutator_s>1 || param.mutation_rate>0.00000008 || param.non_damage_e>0.04){
+    //if(param.mutator_s>1 || param.mutation_rate>0.00000008 || param.non_damage_e>0.04){
+    if(param.mutator_s>1 || param.mutation_rate>0.00000008){
       outfile << replicate << "\t0\t";
       print_out(param,population,outfile);
       logout << "done " << replicate << " time\n";logout.flush();
